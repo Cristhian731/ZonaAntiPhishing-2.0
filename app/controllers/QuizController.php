@@ -81,7 +81,14 @@ class QuizController
         $passingScore = max(0, min(100, (int) ($quiz['passing_score'] ?? 70)));
         $passed = $score >= $passingScore;
 
-        $this->quizModel->saveQuizAttempt($userId, $quizId, $score, $passed);
+        $attemptSaved = $this->quizModel->saveQuizAttempt($userId, $quizId, $score, $passed);
+
+        if ($attemptSaved && $passed) {
+            require_once __DIR__ . '/../models/UserProgress.php';
+
+            $userProgress = new UserProgress();
+            $userProgress->markLessonCompleted($userId, $lessonId);
+        }
 
         return [
             'score' => $score,

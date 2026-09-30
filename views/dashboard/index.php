@@ -15,29 +15,34 @@ $userRole = trim((string) ($_SESSION['user_role'] ?? ''));
 $safeUserName = htmlspecialchars($userName, ENT_QUOTES, 'UTF-8');
 $safeUserRole = htmlspecialchars($userRole, ENT_QUOTES, 'UTF-8');
 
+require_once __DIR__ . '/../../app/controllers/DashboardController.php';
+
+$dashboardController = new DashboardController();
+$dashboardMetrics = $dashboardController->getMetricsForUser((int) $_SESSION['user_id']);
+
 $metrics = [
     [
         'id' => 'courses',
         'label' => 'Courses Available',
-        'value' => '—',
+        'value' => (string) $dashboardMetrics['courses_available'],
         'style' => '',
     ],
     [
-        'id' => 'quizzes',
-        'label' => 'Quizzes Completed',
-        'value' => '—',
+        'id' => 'lessons-completed',
+        'label' => 'Lessons Completed',
+        'value' => (string) $dashboardMetrics['lessons_completed'],
         'style' => 'stat-deep',
     ],
     [
-        'id' => 'simulations',
-        'label' => 'Simulations Completed',
-        'value' => '—',
+        'id' => 'quizzes-passed',
+        'label' => 'Quizzes Passed',
+        'value' => (string) $dashboardMetrics['quizzes_passed'],
         'style' => 'stat-black',
     ],
     [
-        'id' => 'certificates',
-        'label' => 'Certificates',
-        'value' => '—',
+        'id' => 'progress',
+        'label' => 'Progress %',
+        'value' => (string) $dashboardMetrics['progress_percent'] . '%',
         'style' => '',
     ],
 ];
