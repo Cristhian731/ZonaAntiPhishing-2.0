@@ -128,13 +128,10 @@
                             href="?page=simulations">Simulations</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="?page=dashboard#profile">Profile</a>
+                        <a class="nav-link <?= ($activePage ?? '') === 'profile' ? 'active' : ''; ?>"
+                            aria-current="<?= ($activePage ?? '') === 'profile' ? 'page' : 'false'; ?>"
+                            href="?page=profile">Profile</a>
                     </li>
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-logout" href="?page=logout">Logout</a>
-                        </li>
-                    <?php endif; ?>
                 </ul>
             </div>
         </div>
