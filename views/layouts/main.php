@@ -123,7 +123,9 @@
                         <a class="nav-link" href="?page=dashboard#quizzes">Quizzes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="?page=dashboard#simulations">Simulations</a>
+                        <a class="nav-link <?= ($activePage ?? '') === 'simulations' ? 'active' : ''; ?>"
+                            aria-current="<?= ($activePage ?? '') === 'simulations' ? 'page' : 'false'; ?>"
+                            href="?page=simulations">Simulations</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="?page=dashboard#profile">Profile</a>
