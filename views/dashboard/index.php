@@ -40,6 +40,12 @@ $metrics = [
         'style' => 'stat-black',
     ],
     [
+        'id' => 'simulations-passed',
+        'label' => 'Simulations Passed',
+        'value' => (string) $dashboardMetrics['simulations_passed'],
+        'style' => 'stat-deep',
+    ],
+    [
         'id' => 'progress',
         'label' => 'Progress %',
         'value' => (string) $dashboardMetrics['progress_percent'] . '%',

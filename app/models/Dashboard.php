@@ -15,17 +15,28 @@ class Dashboard
     public function getMetricsForUser(int $userId): array
     {
         $sql = "SELECT
-                    (SELECT COUNT(*) FROM courses) AS courses_available,
-                    (SELECT COUNT(*) FROM user_progress
-                     WHERE user_id = :progress_user_id AND completed = 1) AS lessons_completed,
-                    (SELECT COUNT(*) FROM quiz_attempts
-                     WHERE user_id = :attempt_user_id AND passed = 1) AS quizzes_passed,
-                    (SELECT COUNT(*) FROM lessons) AS total_lessons";
+                (SELECT COUNT(*) FROM courses) AS courses_available,
+
+                (SELECT COUNT(*) FROM user_progress
+                 WHERE user_id = :progress_user_id
+                 AND completed = 1) AS lessons_completed,
+
+                (SELECT COUNT(*) FROM quiz_attempts
+                 WHERE user_id = :attempt_user_id
+                 AND passed = 1) AS quizzes_passed,
+
+                (SELECT COUNT(*) FROM simulation_attempts
+                 WHERE user_id = :simulation_user_id
+                 AND passed = 1) AS simulations_passed,
+
+                (SELECT COUNT(*) FROM lessons) AS total_lessons";
 
         $stmt = $this->conn->prepare($sql);
+
         $stmt->execute([
             'progress_user_id' => $userId,
             'attempt_user_id' => $userId,
+            'simulation_user_id' => $userId,
         ]);
 
         $metrics = $stmt->fetch(PDO::FETCH_ASSOC);
