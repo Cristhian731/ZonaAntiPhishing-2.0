@@ -45,7 +45,8 @@ $metrics = [
 ob_start();
 ?>
 
-<header id="dashboard-top" class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4 mb-lg-5">
+<header id="dashboard-top"
+    class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4 mb-lg-5">
     <div>
         <p class="small fw-bold text-primary text-uppercase mb-2">Learning overview</p>
         <h1 class="display-6 fw-bold mb-2">Your dashboard</h1>
@@ -70,7 +71,8 @@ ob_start();
     <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 g-lg-4">
         <?php foreach ($metrics as $metric): ?>
             <div class="col" id="<?= htmlspecialchars($metric['id'], ENT_QUOTES, 'UTF-8'); ?>">
-                <article class="card dashboard-stat <?= htmlspecialchars($metric['style'], ENT_QUOTES, 'UTF-8'); ?> shadow-sm">
+                <article
+                    class="card dashboard-stat <?= htmlspecialchars($metric['style'], ENT_QUOTES, 'UTF-8'); ?> shadow-sm">
                     <div class="card-body p-4">
                         <h3 class="h6 text-body-secondary fw-semibold mb-3">
                             <?= htmlspecialchars($metric['label'], ENT_QUOTES, 'UTF-8'); ?>

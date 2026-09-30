@@ -5,12 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars((string) ($title ?? 'Zona AntiPhishing'), ENT_QUOTES, 'UTF-8'); ?></title>
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-        crossorigin="anonymous"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
         :root {
             --zap-primary: #1976D2;
@@ -106,25 +102,22 @@
                 <span>Zona AntiPhishing</span>
             </a>
 
-            <button
-                class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#mainNavigation"
-                aria-controls="mainNavigation"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation"
+                aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="mainNavigation">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 py-2 py-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="?page=dashboard#dashboard-top">Dashboard</a>
+                        <a class="nav-link <?= ($activePage ?? 'dashboard') === 'dashboard' ? 'active' : ''; ?>"
+                            aria-current="<?= ($activePage ?? 'dashboard') === 'dashboard' ? 'page' : 'false'; ?>"
+                            href="?page=dashboard#dashboard-top">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="?page=dashboard#courses">Courses</a>
+                        <a class="nav-link <?= ($activePage ?? '') === 'courses' ? 'active' : ''; ?>"
+                            aria-current="<?= ($activePage ?? '') === 'courses' ? 'page' : 'false'; ?>"
+                            href="?page=courses">Courses</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="?page=dashboard#quizzes">Quizzes</a>
@@ -149,11 +142,9 @@
         <?= $content ?? ''; ?>
     </main>
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"
-    ></script>
+        crossorigin="anonymous"></script>
 </body>
 
 </html>

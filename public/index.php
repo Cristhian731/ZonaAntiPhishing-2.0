@@ -20,6 +20,18 @@ switch ($page) {
         require_once __DIR__ . '/../views/dashboard/index.php';
         break;
 
+    case 'courses':
+        require_once __DIR__ . '/../views/courses/index.php';
+        break;
+
+    case 'course':
+        require_once __DIR__ . '/../views/courses/show.php';
+        break;
+
+    case 'quiz':
+        require_once __DIR__ . '/../views/quizzes/show.php';
+        break;
+
     case 'logout':
         require_once __DIR__ . '/../views/auth/logout.php';
         break;
