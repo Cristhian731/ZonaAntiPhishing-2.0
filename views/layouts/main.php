@@ -133,6 +133,11 @@
                             href="?page=certificates">Certificates</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link <?= ($activePage ?? '') === 'url-analyzer' ? 'active' : ''; ?>"
+                            aria-current="<?= ($activePage ?? '') === 'url-analyzer' ? 'page' : 'false'; ?>"
+                            href="?page=url-analyzer">URL Analyzer</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link <?= ($activePage ?? '') === 'profile' ? 'active' : ''; ?>"
                             aria-current="<?= ($activePage ?? '') === 'profile' ? 'page' : 'false'; ?>"
                             href="?page=profile">Profile</a>

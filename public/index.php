@@ -4,13 +4,21 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-$page = $_GET['page'] ?? 'login';
+$page = $_GET['page'] ?? (isset($_SESSION['user_id']) ? 'dashboard' : 'home');
 
 if (!is_string($page)) {
     $page = 'login';
 }
 
 switch ($page) {
+
+    case 'home':
+        require_once __DIR__ . '/../views/home/index.php';
+        break;
+
+    case 'login':
+        require_once __DIR__ . '/../views/auth/login.php';
+        break;
 
     case 'register':
         require_once __DIR__ . '/../views/auth/register.php';
@@ -47,6 +55,10 @@ switch ($page) {
     case 'certificate-pdf':
         require_once __DIR__ . '/../app/controllers/CertificatePdfController.php';
         (new CertificatePdfController())->download();
+        break;
+
+    case 'url-analyzer':
+        require_once __DIR__ . '/../views/url-analyzer/index.php';
         break;
 
     case 'simulation':
