@@ -44,6 +44,11 @@ switch ($page) {
         require_once __DIR__ . '/../views/certificates/show.php';
         break;
 
+    case 'certificate-pdf':
+        require_once __DIR__ . '/../app/controllers/CertificatePdfController.php';
+        (new CertificatePdfController())->download();
+        break;
+
     case 'simulation':
         require_once __DIR__ . '/../views/simulations/show.php';
         break;

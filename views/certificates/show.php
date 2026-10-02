@@ -34,6 +34,9 @@ ob_start();
 
 <div class="mb-4">
     <a class="btn btn-outline-secondary" href="?page=certificates">&larr; Certificates</a>
+    <a class="btn btn-primary ms-2" href="?page=certificate-pdf&amp;id=<?= (int) $certificate['id']; ?>">
+        Download PDF
+    </a>
 </div>
 
 <article class="card border-primary shadow-sm mx-auto" style="max-width: 760px;">
