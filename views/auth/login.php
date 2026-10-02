@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../app/controllers/AuthController.php';
+require_once __DIR__ . '/../../app/services/CsrfService.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -14,27 +15,31 @@ if (isset($_SESSION['user_id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-
-    if (is_string($email) && is_string($password) && trim($email) !== '' && $password !== '') {
-        $auth = new AuthController();
-        $result = $auth->login(trim($email), $password);
-
-        if ($result) {
-            session_regenerate_id(true);
-
-            $_SESSION['user_id'] = $result['id'];
-            $_SESSION['user_name'] = $result['name'];
-            $_SESSION['user_role'] = $result['role'] ?? '';
-
-            header('Location: ?page=dashboard');
-            exit;
-        }
-
-        $message = 'Invalid credentials.';
+    if (!CsrfService::validateToken($_POST['csrf_token'] ?? null)) {
+        $message = 'Your session expired or the request could not be verified. Please try again.';
     } else {
-        $message = 'Invalid credentials.';
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        if (is_string($email) && is_string($password) && trim($email) !== '' && $password !== '') {
+            $auth = new AuthController();
+            $result = $auth->login(trim($email), $password);
+
+            if ($result) {
+                session_regenerate_id(true);
+
+                $_SESSION['user_id'] = $result['id'];
+                $_SESSION['user_name'] = $result['name'];
+                $_SESSION['user_role'] = $result['role'] ?? '';
+
+                header('Location: ?page=dashboard');
+                exit;
+            }
+
+            $message = 'Invalid credentials.';
+        } else {
+            $message = 'Invalid credentials.';
+        }
     }
 }
 
@@ -317,6 +322,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form method="POST" action="?page=login">
+                <input type="hidden" name="csrf_token"
+                    value="<?= htmlspecialchars(CsrfService::generateToken(), ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="mb-3">
                     <label class="form-label" for="email">Email</label>
                     <input class="form-control" type="email" id="email" name="email" autocomplete="username" required>

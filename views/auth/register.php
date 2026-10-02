@@ -1,23 +1,31 @@
 <?php
 
 require_once __DIR__ . '/../../app/controllers/AuthController.php';
+require_once __DIR__ . '/../../app/services/CsrfService.php';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $auth = new AuthController();
-
-    $result = $auth->register(
-        $_POST['name'],
-        $_POST['email'],
-        $_POST['password']
-    );
-
-    if ($result) {
-        $message = "User registered successfully ✅";
+    if (!CsrfService::validateToken($_POST['csrf_token'] ?? null)) {
+        $message = 'Your session expired or the request could not be verified. Please try again.';
     } else {
-        $message = "Email already exists ❌";
+        $auth = new AuthController();
+
+        $result = $auth->register(
+            $_POST['name'],
+            $_POST['email'],
+            $_POST['password']
+        );
+
+        if ($result) {
+            $message = "User registered successfully ✅";
+        } else {
+            $message = "Email already exists ❌";
+        }
     }
 }
 
@@ -300,6 +308,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
 
                 <form method="POST" action="?page=register">
+                    <input type="hidden" name="csrf_token"
+                        value="<?= htmlspecialchars(CsrfService::generateToken(), ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label" for="name">Name</label>
                         <input class="form-control" type="text" id="name" name="name" autocomplete="name" required>

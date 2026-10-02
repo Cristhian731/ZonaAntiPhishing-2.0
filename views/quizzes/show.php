@@ -18,6 +18,7 @@ if ($lessonId === false || $lessonId === null || $lessonId < 1) {
 
 require_once __DIR__ . '/../../app/controllers/LessonController.php';
 require_once __DIR__ . '/../../app/controllers/QuizController.php';
+require_once __DIR__ . '/../../app/services/CsrfService.php';
 
 $lessonController = new LessonController();
 $lesson = $lessonController->getLesson((int) $lessonId);
@@ -37,23 +38,27 @@ unset($_SESSION[$quizResultKey]);
 $errorMessage = '';
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-    $answers = $_POST['answers'] ?? [];
+    if (!CsrfService::validateToken($_POST['csrf_token'] ?? null)) {
+        $errorMessage = 'Your session expired or the request could not be verified. Please try again.';
+    } else {
+        $answers = $_POST['answers'] ?? [];
 
-    if ($quiz && is_array($answers)) {
-        $result = $quizController->submitQuiz(
-            (int) $_SESSION['user_id'],
-            (int) $lessonId,
-            $answers
-        );
+        if ($quiz && is_array($answers)) {
+            $result = $quizController->submitQuiz(
+                (int) $_SESSION['user_id'],
+                (int) $lessonId,
+                $answers
+            );
 
-        if ($result !== null) {
-            $_SESSION[$quizResultKey] = $result;
-            header('Location: ?page=quiz&lesson_id=' . (int) $lessonId);
-            exit;
+            if ($result !== null) {
+                $_SESSION[$quizResultKey] = $result;
+                header('Location: ?page=quiz&lesson_id=' . (int) $lessonId);
+                exit;
+            }
         }
-    }
 
-    $errorMessage = 'This quiz has no questions available to score.';
+        $errorMessage = 'This quiz has no questions available to score.';
+    }
 }
 
 $questions = is_array($quiz['questions'] ?? null) ? $quiz['questions'] : [];
@@ -107,6 +112,8 @@ ob_start();
     </div>
 <?php else: ?>
     <form method="POST" action="?page=quiz&amp;lesson_id=<?= (int) $lessonId; ?>">
+        <input type="hidden" name="csrf_token"
+            value="<?= htmlspecialchars(CsrfService::generateToken(), ENT_QUOTES, 'UTF-8'); ?>">
         <?php foreach ($questions as $questionIndex => $question): ?>
             <?php
             $questionId = (int) ($question['id'] ?? 0);

@@ -10,15 +10,21 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require_once __DIR__ . '/../../app/controllers/UrlAnalyzerController.php';
+require_once __DIR__ . '/../../app/services/CsrfService.php';
 
 $title = 'URL Analyzer | Zona AntiPhishing';
 $activePage = 'url-analyzer';
 $inputUrl = isset($_POST['url']) && is_string($_POST['url']) ? $_POST['url'] : '';
 $analysis = null;
+$errorMessage = '';
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-    $urlAnalyzerController = new UrlAnalyzerController();
-    $analysis = $urlAnalyzerController->analyze($inputUrl);
+    if (!CsrfService::validateToken($_POST['csrf_token'] ?? null)) {
+        $errorMessage = 'Your session expired or the request could not be verified. Please try again.';
+    } else {
+        $urlAnalyzerController = new UrlAnalyzerController();
+        $analysis = $urlAnalyzerController->analyze($inputUrl);
+    }
 }
 
 ob_start();
@@ -32,6 +38,8 @@ ob_start();
 <section class="mb-4" aria-labelledby="url-form-title">
     <h2 id="url-form-title" class="h5 fw-bold mb-3">Enter a URL to analyze</h2>
     <form method="POST" action="?page=url-analyzer">
+        <input type="hidden" name="csrf_token"
+            value="<?= htmlspecialchars(CsrfService::generateToken(), ENT_QUOTES, 'UTF-8'); ?>">
         <div class="input-group input-group-lg">
             <input class="form-control" type="text" id="url" name="url"
                 value="<?= htmlspecialchars($inputUrl, ENT_QUOTES, 'UTF-8'); ?>" placeholder="https://example.com"
@@ -40,6 +48,12 @@ ob_start();
         </div>
     </form>
 </section>
+
+<?php if ($errorMessage !== ''): ?>
+    <div class="alert alert-warning" role="alert">
+        <?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8'); ?>
+    </div>
+<?php endif; ?>
 
 <?php if (is_array($analysis)): ?>
     <?php
