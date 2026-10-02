@@ -11,6 +11,15 @@ class QuizController
         $this->quizModel = new Quiz();
     }
 
+    public function getQuizzesForUser(int $userId): array
+    {
+        if ($userId < 1) {
+            return [];
+        }
+
+        return $this->quizModel->getQuizzesForUser($userId);
+    }
+
     public function getQuizForLesson(int $lessonId)
     {
         $quiz = $this->quizModel->getQuizByLessonId($lessonId);

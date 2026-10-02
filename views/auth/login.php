@@ -285,59 +285,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Login - Zona AntiPhishing</title>
 </head>
 
-    <main class="auth-layout">
-        <aside class="auth-aside">
-            <a class="auth-brand" href="?page=home" aria-label="Zona AntiPhishing home">
-                <span class="brand-mark" aria-hidden="true">ZA</span>Zona AntiPhishing
-            </a>
-            <div class="auth-aside-content">
-                <p class="auth-eyebrow mb-3">Practical cybersecurity education</p>
-                <h2>Learn. Practice. Analyze. Protect.</h2>
-                <p class="auth-aside-copy mb-4">
-                    Build practical skills to recognize phishing through interactive learning and realistic practice.
-                </p>
-                <div class="auth-sequence" aria-label="Learn, Practice, Analyze, Certify">
-                    <span>Learn</span><span>Practice</span><span>Analyze</span><span>Certify</span>
+<main class="auth-layout">
+    <aside class="auth-aside">
+        <a class="auth-brand" href="?page=home" aria-label="Zona AntiPhishing home">
+            <span class="brand-mark" aria-hidden="true">ZA</span>Zona AntiPhishing
+        </a>
+        <div class="auth-aside-content">
+            <p class="auth-eyebrow mb-3">Practical cybersecurity education</p>
+            <h2>Learn. Practice. Analyze. Protect.</h2>
+            <p class="auth-aside-copy mb-4">
+                Build practical skills to recognize phishing through interactive learning and realistic practice.
+            </p>
+            <div class="auth-sequence" aria-label="Learn, Practice, Analyze, Certify">
+                <span>Learn</span><span>Practice</span><span>Analyze</span><span>Certify</span>
+            </div>
+        </div>
+        <p class="auth-aside-footer mb-0">Make safer decisions, one message at a time.</p>
+    </aside>
+
+    <section class="auth-main" aria-labelledby="login-title">
+        <div class="auth-form-wrap">
+            <a class="back-link" href="?page=home">Back to Home</a>
+
+            <h1 id="login-title">Welcome Back</h1>
+            <p class="auth-subtitle mb-4">Continue your cybersecurity learning journey.</p>
+
+            <?php if (!empty($message)): ?>
+                <div class="alert alert-danger" role="alert">
+                    <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?>
                 </div>
-            </div>
-            <p class="auth-aside-footer mb-0">Make safer decisions, one message at a time.</p>
-        </aside>
+            <?php endif; ?>
 
-        <section class="auth-main" aria-labelledby="login-title">
-            <div class="auth-form-wrap">
-                <a class="back-link" href="?page=home">Back to Home</a>
+            <form method="POST" action="?page=login">
+                <div class="mb-3">
+                    <label class="form-label" for="email">Email</label>
+                    <input class="form-control" type="email" id="email" name="email" autocomplete="username" required>
+                </div>
 
-                <h1 id="login-title">Welcome Back</h1>
-                <p class="auth-subtitle mb-4">Continue your cybersecurity learning journey.</p>
+                <div class="mb-4">
+                    <label class="form-label" for="password">Password</label>
+                    <input class="form-control" type="password" id="password" name="password"
+                        autocomplete="current-password" required>
+                </div>
 
-                <?php if (!empty($message)): ?>
-                    <div class="alert alert-danger" role="alert">
-                        <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?>
-                    </div>
-                <?php endif; ?>
+                <button class="btn btn-auth w-100" type="submit">Login</button>
+            </form>
 
-                <form method="POST" action="?page=login">
-                    <div class="mb-3">
-                        <label class="form-label" for="email">Email</label>
-                        <input class="form-control" type="email" id="email" name="email"
-                            autocomplete="username" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label" for="password">Password</label>
-                        <input class="form-control" type="password" id="password" name="password"
-                            autocomplete="current-password" required>
-                    </div>
-
-                    <button class="btn btn-auth w-100" type="submit">Login</button>
-                </form>
-
-                <p class="auth-switch mt-4 mb-0">
-                    New to Zona AntiPhishing? <a href="?page=register">Register</a>
-                </p>
-            </div>
-        </section>
-    </main>
+            <p class="auth-switch mt-4 mb-0">
+                New to Zona AntiPhishing? <a href="?page=register">Register</a>
+            </p>
+        </div>
+    </section>
+</main>
 
 </body>
 

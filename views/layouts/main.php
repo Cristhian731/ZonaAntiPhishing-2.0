@@ -120,7 +120,9 @@
                             href="?page=courses">Courses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="?page=dashboard#quizzes">Quizzes</a>
+                        <a class="nav-link <?= ($activePage ?? '') === 'quizzes' ? 'active' : ''; ?>"
+                            aria-current="<?= ($activePage ?? '') === 'quizzes' ? 'page' : 'false'; ?>"
+                            href="?page=quizzes">Quizzes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= ($activePage ?? '') === 'simulations' ? 'active' : ''; ?>"

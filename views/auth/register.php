@@ -265,7 +265,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     </style>
- </head>
+</head>
+
 <body>
     <main class="auth-layout">
         <aside class="auth-aside">
@@ -306,8 +307,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div class="mb-3">
                         <label class="form-label" for="email">Email</label>
-                        <input class="form-control" type="email" id="email" name="email"
-                            autocomplete="email" required>
+                        <input class="form-control" type="email" id="email" name="email" autocomplete="email" required>
                     </div>
 
                     <div class="mb-4">
