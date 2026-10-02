@@ -17,6 +17,7 @@ if ($simulationId === false || $simulationId === null || $simulationId < 1) {
 }
 
 require_once __DIR__ . '/../../app/controllers/SimulationController.php';
+require_once __DIR__ . '/../../app/services/CsrfService.php';
 
 $simulationController = new SimulationController();
 $simulation = $simulationController->getSimulation((int) $simulationId);
@@ -33,23 +34,27 @@ unset($_SESSION[$simulationResultKey]);
 $errorMessage = '';
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-    $answer = $_POST['answer'] ?? null;
+    if (!CsrfService::validateToken($_POST['csrf_token'] ?? null)) {
+        $errorMessage = 'Your session expired or the request could not be verified. Please try again.';
+    } else {
+        $answer = $_POST['answer'] ?? null;
 
-    if (is_string($answer) && $scenario) {
-        $result = $simulationController->submitSimulation(
-            (int) $_SESSION['user_id'],
-            (int) $simulationId,
-            $answer
-        );
+        if (is_string($answer) && $scenario) {
+            $result = $simulationController->submitSimulation(
+                (int) $_SESSION['user_id'],
+                (int) $simulationId,
+                $answer
+            );
 
-        if ($result !== null) {
-            $_SESSION[$simulationResultKey] = $result;
-            header('Location: ?page=simulation&id=' . (int) $simulationId);
-            exit;
+            if ($result !== null) {
+                $_SESSION[$simulationResultKey] = $result;
+                header('Location: ?page=simulation&id=' . (int) $simulationId);
+                exit;
+            }
         }
-    }
 
-    $errorMessage = 'Select a valid answer and try again.';
+        $errorMessage = 'Select a valid answer and try again.';
+    }
 }
 
 $title = (string) ($simulation['title'] ?? 'Simulation') . ' | Zona AntiPhishing';
@@ -89,6 +94,8 @@ ob_start();
     </section>
 <?php else: ?>
     <form method="POST" action="?page=simulation&amp;id=<?= (int) $simulationId; ?>">
+        <input type="hidden" name="csrf_token"
+            value="<?= htmlspecialchars(CsrfService::generateToken(), ENT_QUOTES, 'UTF-8'); ?>">
         <section class="card dashboard-stat mb-4 shadow-sm">
             <div class="card-body p-4 p-lg-5">
                 <p class="small fw-bold text-primary text-uppercase mb-3">Review the scenario</p>

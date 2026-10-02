@@ -90,8 +90,8 @@ ob_start();
                                 </p>
                                 <div class="mt-3">
                                     <a class="btn btn-primary btn-sm"
-                                        href="?page=quiz&amp;lesson_id=<?= (int) ($lesson['id'] ?? 0); ?>">
-                                        Start Quiz
+                                        href="?page=lesson&amp;id=<?= (int) ($lesson['id'] ?? 0); ?>">
+                                        View Lesson
                                     </a>
                                 </div>
                             </div>
