@@ -45,41 +45,299 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#123a37">
+    <title>Login | Zona AntiPhishing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        :root {
+            --ink: #173436;
+            --muted: #546768;
+            --paper: #f4f6f1;
+            --white: #fff;
+            --green: #1e6559;
+            --green-deep: #123a37;
+            --coral: #e66e50;
+            --gold: #edbd59;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+        }
+
+        .auth-layout {
+            display: grid;
+            min-height: 100vh;
+            grid-template-columns: minmax(0, 1.05fr) minmax(420px, 0.95fr);
+        }
+
+        .auth-aside {
+            position: relative;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            background: var(--green-deep);
+            color: var(--white);
+            padding: 2.5rem clamp(2rem, 5vw, 5.5rem);
+        }
+
+        .auth-aside::before,
+        .auth-aside::after {
+            position: absolute;
+            inset: 0;
+            content: "";
+        }
+
+        .auth-aside::before {
+            background-image: url("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1800&q=85");
+            background-position: center;
+            background-size: cover;
+        }
+
+        .auth-aside::after {
+            background: rgb(18 58 55 / 84%);
+        }
+
+        .auth-brand,
+        .auth-aside-content,
+        .auth-aside-footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-brand {
+            color: var(--white);
+            font-size: 1.05rem;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            display: inline-grid;
+            width: 2.15rem;
+            height: 2.15rem;
+            place-items: center;
+            margin-right: 0.55rem;
+            border-radius: 0.35rem;
+            background: var(--coral);
+            color: var(--ink);
+            font-size: 0.72rem;
+            vertical-align: middle;
+        }
+
+        .auth-eyebrow {
+            color: var(--gold);
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .auth-aside h2 {
+            max-width: 570px;
+            font-size: 3.25rem;
+            font-weight: 850;
+            line-height: 1.04;
+        }
+
+        .auth-aside-copy {
+            max-width: 520px;
+            color: rgb(255 255 255 / 84%);
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .auth-sequence {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+            color: var(--white);
+            font-size: 0.85rem;
+            font-weight: 750;
+        }
+
+        .auth-sequence span {
+            border: 1px solid rgb(255 255 255 / 35%);
+            border-radius: 0.3rem;
+            padding: 0.45rem 0.65rem;
+        }
+
+        .auth-aside-footer {
+            color: rgb(255 255 255 / 72%);
+            font-size: 0.88rem;
+        }
+
+        .auth-main {
+            display: grid;
+            min-height: 100vh;
+            align-items: center;
+            justify-items: center;
+            padding: 2.5rem clamp(1.25rem, 4vw, 4rem);
+        }
+
+        .auth-form-wrap {
+            width: 100%;
+            max-width: 430px;
+        }
+
+        .back-link,
+        .auth-switch a {
+            color: var(--green);
+            font-weight: 700;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 0.2em;
+        }
+
+        .back-link:hover,
+        .auth-switch a:hover {
+            color: var(--green-deep);
+        }
+
+        .auth-main h1 {
+            margin-top: 2.4rem;
+            font-size: 2.45rem;
+            font-weight: 850;
+            line-height: 1.1;
+        }
+
+        .auth-subtitle {
+            color: var(--muted);
+            font-size: 1.02rem;
+            line-height: 1.6;
+        }
+
+        .form-label {
+            color: var(--ink);
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .form-control {
+            min-height: 3.1rem;
+            border-color: #c9d4ce;
+            border-radius: 0.35rem;
+            background: var(--white);
+        }
+
+        .form-control:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 0.2rem rgb(30 101 89 / 15%);
+        }
+
+        .btn-auth {
+            min-height: 3.1rem;
+            border: 1px solid var(--coral);
+            border-radius: 0.35rem;
+            background: var(--coral);
+            color: #201c19;
+            font-weight: 800;
+        }
+
+        .btn-auth:hover,
+        .btn-auth:focus-visible {
+            border-color: #cf563a;
+            background: #cf563a;
+            color: var(--white);
+        }
+
+        .auth-switch {
+            color: var(--muted);
+        }
+
+        @media (max-width: 767.98px) {
+            .auth-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-aside {
+                min-height: auto;
+                gap: 2.5rem;
+                padding: 1.3rem 1.25rem 1.5rem;
+            }
+
+            .auth-aside h2 {
+                margin-bottom: 0.5rem;
+                font-size: 1.65rem;
+            }
+
+            .auth-aside-copy,
+            .auth-sequence,
+            .auth-aside-footer {
+                display: none;
+            }
+
+            .auth-main {
+                min-height: auto;
+                padding: 2rem 1.25rem 3rem;
+            }
+
+            .auth-main h1 {
+                margin-top: 2rem;
+                font-size: 2.1rem;
+            }
+        }
+    </style>
     <title>Login - Zona AntiPhishing</title>
 </head>
 
-<body>
+    <main class="auth-layout">
+        <aside class="auth-aside">
+            <a class="auth-brand" href="?page=home" aria-label="Zona AntiPhishing home">
+                <span class="brand-mark" aria-hidden="true">ZA</span>Zona AntiPhishing
+            </a>
+            <div class="auth-aside-content">
+                <p class="auth-eyebrow mb-3">Practical cybersecurity education</p>
+                <h2>Learn. Practice. Analyze. Protect.</h2>
+                <p class="auth-aside-copy mb-4">
+                    Build practical skills to recognize phishing through interactive learning and realistic practice.
+                </p>
+                <div class="auth-sequence" aria-label="Learn, Practice, Analyze, Certify">
+                    <span>Learn</span><span>Practice</span><span>Analyze</span><span>Certify</span>
+                </div>
+            </div>
+            <p class="auth-aside-footer mb-0">Make safer decisions, one message at a time.</p>
+        </aside>
 
-    <h1>Zona AntiPhishing</h1>
+        <section class="auth-main" aria-labelledby="login-title">
+            <div class="auth-form-wrap">
+                <a class="back-link" href="?page=home">Back to Home</a>
 
-    <h2>Login</h2>
+                <h1 id="login-title">Welcome Back</h1>
+                <p class="auth-subtitle mb-4">Continue your cybersecurity learning journey.</p>
 
-    <?php if (!empty($message)): ?>
-        <p>
-            <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?>
-        </p>
-    <?php endif; ?>
+                <?php if (!empty($message)): ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?>
+                    </div>
+                <?php endif; ?>
 
-    <form method="POST" action="?page=login">
+                <form method="POST" action="?page=login">
+                    <div class="mb-3">
+                        <label class="form-label" for="email">Email</label>
+                        <input class="form-control" type="email" id="email" name="email"
+                            autocomplete="username" required>
+                    </div>
 
-        <label for="email">Email</label>
-        <br>
-        <input type="email" id="email" name="email" required>
+                    <div class="mb-4">
+                        <label class="form-label" for="password">Password</label>
+                        <input class="form-control" type="password" id="password" name="password"
+                            autocomplete="current-password" required>
+                    </div>
 
-        <br><br>
+                    <button class="btn btn-auth w-100" type="submit">Login</button>
+                </form>
 
-        <label for="password">Password</label>
-        <br>
-        <input type="password" id="password" name="password" required>
-
-        <br><br>
-
-        <button type="submit">
-            Login
-        </button>
-
-    </form>
+                <p class="auth-switch mt-4 mb-0">
+                    New to Zona AntiPhishing? <a href="?page=register">Register</a>
+                </p>
+            </div>
+        </section>
+    </main>
 
 </body>
 
