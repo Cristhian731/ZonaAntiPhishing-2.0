@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/CertificateProgress.php';
 
 class UserProgress
 {
@@ -35,9 +36,38 @@ class UserProgress
 
         $stmt = $this->conn->prepare($sql);
 
-        return $stmt->execute([
+        $saved = $stmt->execute([
             'user_id' => $userId,
             'lesson_id' => $lessonId,
         ]);
+
+        if (!$saved) {
+            return false;
+        }
+
+        try {
+            $courseStmt = $this->conn->prepare(
+                'SELECT course_id FROM lessons WHERE id = :lesson_id LIMIT 1'
+            );
+            $courseStmt->execute([
+                'lesson_id' => $lessonId,
+            ]);
+            $courseId = (int) $courseStmt->fetchColumn();
+
+            if ($courseId > 0) {
+                $certificateProgress = new CertificateProgress();
+
+                if (
+                    $certificateProgress->isCourseCompleted($userId, $courseId)
+                    && !$certificateProgress->certificateExists($userId, $courseId)
+                ) {
+                    $certificateProgress->generateCertificate($userId, $courseId);
+                }
+            }
+        } catch (Throwable $exception) {
+            error_log('Certificate generation failed: ' . $exception->getMessage());
+        }
+
+        return true;
     }
 }
