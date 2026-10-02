@@ -128,6 +128,11 @@
                             href="?page=simulations">Simulations</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link <?= ($activePage ?? '') === 'certificates' ? 'active' : ''; ?>"
+                            aria-current="<?= ($activePage ?? '') === 'certificates' ? 'page' : 'false'; ?>"
+                            href="?page=certificates">Certificates</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link <?= ($activePage ?? '') === 'profile' ? 'active' : ''; ?>"
                             aria-current="<?= ($activePage ?? '') === 'profile' ? 'page' : 'false'; ?>"
                             href="?page=profile">Profile</a>

@@ -36,6 +36,14 @@ switch ($page) {
         require_once __DIR__ . '/../views/simulations/index.php';
         break;
 
+    case 'certificates':
+        require_once __DIR__ . '/../views/certificates/index.php';
+        break;
+
+    case 'certificate':
+        require_once __DIR__ . '/../views/certificates/show.php';
+        break;
+
     case 'simulation':
         require_once __DIR__ . '/../views/simulations/show.php';
         break;
