@@ -52,16 +52,37 @@ class Simulation
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function saveSimulationAttempt(int $userId, int $simulationId, int $score, bool $passed): bool
+    public function getScenariosBySimulationId(int $simulationId): array
     {
-        $sql = "INSERT INTO simulation_attempts (user_id, simulation_id, score, passed, completed_at)
-                VALUES (:user_id, :simulation_id, :score, :passed, CURRENT_TIMESTAMP)";
+        $sql = "SELECT * FROM simulation_scenarios
+                WHERE simulation_id = :simulation_id
+                ORDER BY step_order ASC, id ASC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':simulation_id', $simulationId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function saveSimulationAttempt(
+        int $userId,
+        int $simulationId,
+        int $score,
+        bool $passed,
+        int $simulationVersion
+    ): bool {
+        $sql = "INSERT INTO simulation_attempts
+                    (user_id, simulation_id, simulation_version, score, passed, completed_at)
+                VALUES
+                    (:user_id, :simulation_id, :simulation_version, :score, :passed, CURRENT_TIMESTAMP)";
 
         $stmt = $this->conn->prepare($sql);
 
         return $stmt->execute([
             'user_id' => $userId,
             'simulation_id' => $simulationId,
+            'simulation_version' => $simulationVersion,
             'score' => $score,
             'passed' => (int) $passed,
         ]);

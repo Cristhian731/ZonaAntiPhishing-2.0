@@ -130,7 +130,8 @@ Bootstrap assets and the landing/authentication imagery are loaded from external
 3. Import [`docs/database/sprint10_certificates_complete.sql`](docs/database/sprint10_certificates_complete.sql) into that database. This dump creates the tables and includes development seed data; it does not create the database itself.
 4. Apply [`docs/database/sprint11_lesson_summary.sql`](docs/database/sprint11_lesson_summary.sql) after the dump. It adds the nullable `lessons.summary` column and updates the seeded lessons with educational content.
 5. Apply [`docs/database/sprint12_educational_content.sql`](docs/database/sprint12_educational_content.sql) after Sprint 11 to install the complete lesson content, summaries, and quizzes. Back up the database first; the migration preserves existing quiz questions, options, and attempts.
-6. Set the local database host, database name, username, and password in [`config/database.php`](config/database.php) to match your environment.
+6. Apply [`docs/database/sprint13_simulations2.sql`](docs/database/sprint13_simulations2.sql) after Sprint 12 to add ordered simulation scenarios and expand each simulation to five decisions. Back up the database first; existing attempt records are preserved as version 1.
+7. Set the local database host, database name, username, and password in [`config/database.php`](config/database.php) to match your environment.
 
 The application currently reads database settings directly from [`config/database.php`](config/database.php); it does not load a `.env` file or run migrations automatically. Keep deployment credentials out of public repositories and do not use development database defaults in production.
 
