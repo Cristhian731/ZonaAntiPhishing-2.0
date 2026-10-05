@@ -158,8 +158,10 @@ ob_start();
                     $isRecommendationList = $sectionTitle === 'How to Protect Yourself';
                     $isTakeawayList = $sectionTitle === 'Key Takeaways';
                     ?>
-                    <section class="mb-4" aria-labelledby="lesson-section-<?= (int) array_search($sectionTitle, $sectionTitles, true); ?>">
-                        <h3 id="lesson-section-<?= (int) array_search($sectionTitle, $sectionTitles, true); ?>" class="h5 fw-bold mb-3">
+                    <section class="mb-4"
+                        aria-labelledby="lesson-section-<?= (int) array_search($sectionTitle, $sectionTitles, true); ?>">
+                        <h3 id="lesson-section-<?= (int) array_search($sectionTitle, $sectionTitles, true); ?>"
+                            class="h5 fw-bold mb-3">
                             <?= htmlspecialchars($sectionTitle, ENT_QUOTES, 'UTF-8'); ?>
                         </h3>
                         <?php if ($isRecommendationList || $isTakeawayList): ?>

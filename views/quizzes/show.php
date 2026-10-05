@@ -18,6 +18,7 @@ if ($lessonId === false || $lessonId === null || $lessonId < 1) {
 
 require_once __DIR__ . '/../../app/controllers/LessonController.php';
 require_once __DIR__ . '/../../app/controllers/QuizController.php';
+require_once __DIR__ . '/../../app/controllers/CertificateController.php';
 require_once __DIR__ . '/../../app/services/CsrfService.php';
 
 $lessonController = new LessonController();
@@ -31,6 +32,7 @@ if (!$lesson) {
 $courseId = (int) ($lesson['course_id'] ?? 0);
 
 $quizController = new QuizController();
+$certificateController = new CertificateController();
 $quiz = $quizController->getQuizForLesson((int) $lessonId);
 $quizResultKey = 'quiz_result_' . (int) $lessonId;
 $result = $_SESSION[$quizResultKey] ?? null;
@@ -44,6 +46,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $answers = $_POST['answers'] ?? [];
 
         if ($quiz && is_array($answers)) {
+            $existingCertificateIds = [];
+
+            foreach ($certificateController->getUserCertificates((int) $_SESSION['user_id']) as $certificateRecord) {
+                if ((int) ($certificateRecord['course_id'] ?? 0) === $courseId) {
+                    $existingCertificateIds[(int) $certificateRecord['id']] = true;
+                }
+            }
+
             $result = $quizController->submitQuiz(
                 (int) $_SESSION['user_id'],
                 (int) $lessonId,
@@ -51,6 +61,20 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             );
 
             if ($result !== null) {
+                if ($result['passed']) {
+                    foreach ($certificateController->getUserCertificates((int) $_SESSION['user_id']) as $certificateRecord) {
+                        $certificateRecordId = (int) ($certificateRecord['id'] ?? 0);
+
+                        if (
+                            (int) ($certificateRecord['course_id'] ?? 0) === $courseId
+                            && !isset($existingCertificateIds[$certificateRecordId])
+                        ) {
+                            $result['new_certificate_id'] = $certificateRecordId;
+                            break;
+                        }
+                    }
+                }
+
                 $_SESSION[$quizResultKey] = $result;
                 header('Location: ?page=quiz&lesson_id=' . (int) $lessonId);
                 exit;
@@ -58,6 +82,23 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         }
 
         $errorMessage = 'This quiz has no questions available to score.';
+    }
+}
+
+$celebrationCertificate = null;
+
+if (
+    is_array($result)
+    && !empty($result['passed'])
+    && isset($result['new_certificate_id'])
+) {
+    $candidateCertificate = $certificateController->getCertificate((int) $result['new_certificate_id']);
+
+    if (
+        $candidateCertificate !== null
+        && (int) $candidateCertificate['user_id'] === (int) $_SESSION['user_id']
+    ) {
+        $celebrationCertificate = $candidateCertificate;
     }
 }
 
@@ -95,13 +136,323 @@ ob_start();
 <?php endif; ?>
 
 <?php if ($result !== null): ?>
-    <section class="alert <?= $result['passed'] ? 'alert-success' : 'alert-danger'; ?>" role="status">
-        <h2 class="h4 fw-bold"><?= $result['passed'] ? 'Quiz passed' : 'Quiz not passed'; ?></h2>
-        <p class="mb-1">Your score: <strong><?= (int) $result['score']; ?>%</strong></p>
-        <p class="mb-0">
-            Correct answers: <?= (int) $result['correct_answers']; ?> of <?= (int) $result['total_questions']; ?>
-        </p>
-    </section>
+    <?php if ($celebrationCertificate !== null): ?>
+        <div id="certificate-celebration" class="certificate-celebration-backdrop">
+            <div class="certificate-confetti" aria-hidden="true"></div>
+            <section class="certificate-celebration-modal" role="dialog" aria-modal="true"
+                aria-labelledby="certificate-celebration-title" aria-describedby="certificate-celebration-message">
+                <button class="certificate-celebration-close" type="button" aria-label="Close certificate celebration">
+                    <span aria-hidden="true">&#215;</span>
+                </button>
+                <div class="certificate-celebration-mark" aria-hidden="true">ZA</div>
+                <p class="certificate-celebration-kicker mb-2">Achievement unlocked</p>
+                <h2 id="certificate-celebration-title" class="h4 fw-bold mb-3" tabindex="-1">🏆 Certificate Unlocked</h2>
+                <h3 class="certificate-celebration-title mb-3">Congratulations!</h3>
+                <p id="certificate-celebration-message" class="certificate-celebration-copy mb-2">
+                    You have successfully completed:
+                </p>
+                <p class="certificate-celebration-course mb-3">
+                    <?= htmlspecialchars((string) $celebrationCertificate['course_title'], ENT_QUOTES, 'UTF-8'); ?>
+                </p>
+                <p class="text-body-secondary mb-4">
+                    Your dedication and effort have earned a certificate of completion.
+                </p>
+                <p class="certificate-celebration-score small text-body-secondary mb-4">
+                    Quiz score: <strong><?= (int) $result['score']; ?>%</strong>
+                    <span class="mx-2" aria-hidden="true">&#183;</span>
+                    <?= (int) $result['correct_answers']; ?> of <?= (int) $result['total_questions']; ?> correct
+                </p>
+                <div class="certificate-celebration-actions">
+                    <a class="btn btn-primary" href="?page=certificate&amp;id=<?= (int) $celebrationCertificate['id']; ?>">
+                        View Certificate
+                    </a>
+                    <a class="btn btn-outline-primary"
+                        href="?page=certificate-pdf&amp;id=<?= (int) $celebrationCertificate['id']; ?>">
+                        Download PDF
+                    </a>
+                    <a class="btn btn-outline-secondary" href="?page=courses">Continue Learning</a>
+                </div>
+            </section>
+        </div>
+        <style>
+            .certificate-celebration-backdrop {
+                position: fixed;
+                z-index: 1080;
+                inset: 0;
+                isolation: isolate;
+                display: grid;
+                place-items: center;
+                padding: 1rem;
+                overflow-y: auto;
+                background: rgb(7 19 31 / 76%);
+                backdrop-filter: blur(8px);
+                animation: certificate-backdrop-in 350ms ease-out both;
+            }
+
+            .certificate-celebration-modal {
+                position: relative;
+                z-index: 2;
+                width: min(920px, calc(100vw - 2rem));
+                padding: 4rem 5rem 3.5rem;
+                border: 1px solid #d6e0e8;
+                border-top: 4px solid #c6a252;
+                background: linear-gradient(145deg, #fff 0%, #f6f9fc 100%);
+                box-shadow: 0 2rem 6rem rgb(0 0 0 / 32%);
+                color: #172f43;
+                text-align: center;
+                animation: certificate-modal-in 420ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+            }
+
+            .certificate-celebration-close {
+                position: absolute;
+                top: 0.85rem;
+                right: 0.9rem;
+                display: grid;
+                width: 2.5rem;
+                height: 2.5rem;
+                place-items: center;
+                border: 1px solid #d5dee6;
+                background: #fff;
+                color: #435767;
+                font-size: 1.55rem;
+                line-height: 1;
+            }
+
+            .certificate-celebration-close:hover,
+            .certificate-celebration-close:focus-visible {
+                border-color: #1976d2;
+                color: #0d47a1;
+            }
+
+            .certificate-celebration-mark {
+                display: grid;
+                width: 4rem;
+                height: 4rem;
+                place-items: center;
+                margin: 0 auto 1.25rem;
+                border: 1px solid #c6a252;
+                border-radius: 50%;
+                color: #0d3554;
+                font-size: 0.95rem;
+                font-weight: 800;
+            }
+
+            .certificate-celebration-kicker {
+                color: #8a6b27;
+                font-size: 0.75rem;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+
+            .certificate-celebration-modal h2 {
+                color: #0d3554;
+            }
+
+            .certificate-celebration-title {
+                color: #172f43;
+                font-family: Georgia, 'Times New Roman', serif;
+                font-size: 2.8rem;
+                font-weight: 600;
+            }
+
+            .certificate-celebration-copy,
+            .certificate-celebration-course {
+                font-size: 1.1rem;
+            }
+
+            .certificate-celebration-course {
+                color: #0d47a1;
+                font-weight: 750;
+                overflow-wrap: anywhere;
+            }
+
+            .certificate-celebration-score {
+                border-top: 1px solid #e0e7ed;
+                padding-top: 1rem;
+            }
+
+            .certificate-celebration-actions {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.65rem;
+            }
+
+            .certificate-celebration-actions .btn {
+                padding: 0.8rem 1.3rem;
+            }
+
+            .certificate-confetti {
+                position: fixed;
+                z-index: 1;
+                inset: 0;
+                overflow: hidden;
+                pointer-events: none;
+            }
+
+            .certificate-confetti-piece {
+                position: absolute;
+                top: 0.5rem;
+                width: 0.55rem;
+                height: 1rem;
+                border-radius: 1px;
+                opacity: 0.9;
+                animation: certificate-confetti-fall 3.8s cubic-bezier(0.22, 0.62, 0.35, 1) var(--delay) both;
+            }
+
+            @keyframes certificate-backdrop-in {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes certificate-modal-in {
+                from {
+                    opacity: 0;
+                    transform: scale(0.94) translateY(0.75rem);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                }
+            }
+
+            @keyframes certificate-confetti-fall {
+                0% {
+                    opacity: 0.9;
+                }
+
+                72% {
+                    opacity: 0.75;
+                }
+
+                to {
+                    opacity: 0;
+                    transform: translate3d(var(--drift), var(--fall-distance), 0) rotate(var(--turn));
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+
+                .certificate-celebration-backdrop,
+                .certificate-celebration-modal {
+                    animation: none;
+                }
+
+                .certificate-confetti-piece {
+                    display: none;
+                    animation: none;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+                .certificate-celebration-modal {
+                    padding: 3.25rem 1.25rem 1.75rem;
+                }
+
+                .certificate-celebration-mark {
+                    width: 3.25rem;
+                    height: 3.25rem;
+                }
+
+                .certificate-celebration-title {
+                    font-size: 2rem;
+                }
+
+                .certificate-celebration-actions {
+                    flex-direction: column;
+                }
+
+                .certificate-celebration-actions .btn {
+                    width: 100%;
+                }
+            }
+        </style>
+        <script>
+            (() => {
+                const backdrop = document.getElementById('certificate-celebration');
+                const confetti = backdrop?.querySelector('.certificate-confetti');
+                const closeButton = backdrop?.querySelector('.certificate-celebration-close');
+                const dialog = backdrop?.querySelector('.certificate-celebration-modal');
+                const dialogTitle = backdrop?.querySelector('#certificate-celebration-title');
+                const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+                if (!backdrop || !confetti || !closeButton || !dialog) {
+                    return;
+                }
+
+                const dismiss = () => {
+                    backdrop.remove();
+                    document.body.style.overflow = '';
+                    document.removeEventListener('keydown', onKeyDown);
+                };
+                const onKeyDown = (event) => {
+                    if (event.key === 'Escape') {
+                        dismiss();
+                        return;
+                    }
+
+                    if (event.key === 'Tab') {
+                        const focusable = [...dialog.querySelectorAll('a[href], button:not([disabled])')];
+                        const first = focusable[0];
+                        const last = focusable[focusable.length - 1];
+
+                        if (event.shiftKey && document.activeElement === first) {
+                            event.preventDefault();
+                            last?.focus();
+                        } else if (!event.shiftKey && document.activeElement === last) {
+                            event.preventDefault();
+                            first?.focus();
+                        }
+                    }
+                };
+
+                document.body.style.overflow = 'hidden';
+                document.addEventListener('keydown', onKeyDown);
+                closeButton.addEventListener('click', dismiss);
+                backdrop.addEventListener('click', (event) => {
+                    if (event.target === backdrop) {
+                        dismiss();
+                    }
+                });
+                dialogTitle?.focus({ preventScroll: true });
+
+                if (reducedMotion) {
+                    return;
+                }
+
+                const colors = ['#0d47a1', '#1976d2', '#c6a252', '#ffffff'];
+
+                for (let index = 0; index < 64; index += 1) {
+                    const piece = document.createElement('span');
+                    piece.className = 'certificate-confetti-piece';
+                    piece.style.left = `${Math.random() * 100}%`;
+                    piece.style.backgroundColor = colors[index % colors.length];
+                    piece.style.setProperty('--delay', `${Math.random() * 200}ms`);
+                    piece.style.setProperty('--drift', `${Math.round(Math.random() * 180 - 90)}px`);
+                    piece.style.setProperty('--fall-distance', `${70 + Math.random() * 40}vh`);
+                    piece.style.setProperty('--turn', `${Math.round(Math.random() * 720 - 360)}deg`);
+                    confetti.append(piece);
+                }
+
+                window.setTimeout(() => confetti.replaceChildren(), 5000);
+            })();
+        </script>
+    <?php else: ?>
+        <section class="alert <?= $result['passed'] ? 'alert-success' : 'alert-danger'; ?>" role="status">
+            <h2 class="h4 fw-bold"><?= $result['passed'] ? 'Quiz passed' : 'Quiz not passed'; ?></h2>
+            <p class="mb-1">Your score: <strong><?= (int) $result['score']; ?>%</strong></p>
+            <p class="mb-0">
+                Correct answers: <?= (int) $result['correct_answers']; ?> of <?= (int) $result['total_questions']; ?>
+            </p>
+        </section>
+    <?php endif; ?>
 <?php elseif (!$quiz): ?>
     <div class="alert alert-light border" role="status">
         No quiz is available for this lesson yet.

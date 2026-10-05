@@ -26,46 +26,313 @@ if ($certificate === null || (int) $certificate['user_id'] !== (int) $_SESSION['
     exit;
 }
 
+$issuedTimestamp = strtotime((string) ($certificate['issued_at'] ?? ''));
+$issuedDate = $issuedTimestamp !== false
+    ? date('F j, Y', $issuedTimestamp)
+    : (string) ($certificate['issued_at'] ?? '');
+
 $title = 'Certificate | Zona AntiPhishing';
 $activePage = 'certificates';
 
 ob_start();
 ?>
 
-<div class="mb-4">
+<style>
+    .certificate-actions {
+        max-width: 960px;
+        margin: 0 auto 1.5rem;
+    }
+
+    .academic-certificate {
+        position: relative;
+        display: flex;
+        min-height: 590px;
+        max-width: 960px;
+        flex-direction: column;
+        justify-content: space-between;
+        margin: 0 auto;
+        padding: 3.5rem 4rem 2.5rem;
+        overflow: hidden;
+        border: 1px solid #c4a45d;
+        outline: 1px solid #dce4ec;
+        outline-offset: -0.5rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #fff 48%, #f5f8fb 100%);
+        box-shadow: 0 1.25rem 3rem rgb(13 38 59 / 10%);
+        color: #182f43;
+        text-align: center;
+    }
+
+    .academic-certificate> :not(.academic-certificate-watermark, .academic-certificate-decoration) {
+        position: relative;
+        z-index: 1;
+    }
+
+    .academic-certificate-watermark {
+        position: absolute;
+        z-index: 0;
+        top: 50%;
+        left: 50%;
+        color: #0d3554;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 17rem;
+        font-weight: 750;
+        line-height: 1;
+        opacity: 0.055;
+        pointer-events: none;
+        transform: translate(-50%, -54%);
+        user-select: none;
+    }
+
+    .academic-certificate-decoration {
+        position: absolute;
+        z-index: 1;
+        right: 12%;
+        left: 12%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #c4a45d 18%, #c4a45d 82%, transparent);
+    }
+
+    .academic-certificate-decoration-top {
+        top: 2.25rem;
+    }
+
+    .academic-certificate-decoration-bottom {
+        bottom: 2.25rem;
+    }
+
+    .academic-certificate::before,
+    .academic-certificate::after {
+        position: absolute;
+        width: 3.25rem;
+        height: 3.25rem;
+        border-color: #c4a45d;
+        border-style: solid;
+        content: '';
+    }
+
+    .academic-certificate::before {
+        top: 1rem;
+        left: 1rem;
+        border-width: 1px 0 0 1px;
+    }
+
+    .academic-certificate::after {
+        right: 1rem;
+        bottom: 1rem;
+        border-width: 0 1px 1px 0;
+    }
+
+    .academic-certificate-header {
+        color: #0d3554;
+        font-size: 1rem;
+        font-weight: 750;
+        text-transform: uppercase;
+    }
+
+    .academic-certificate-subtitle {
+        color: #5d6e7c;
+        font-size: 0.875rem;
+    }
+
+    .academic-certificate-rule {
+        width: 5rem;
+        height: 2px;
+        margin: 1.5rem auto 1.75rem;
+        background: #c4a45d;
+    }
+
+    .academic-certificate-title {
+        color: #102f4a;
+        font-size: 2rem;
+        font-weight: 750;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .academic-certificate-recipient-label {
+        margin-bottom: 0.45rem;
+        color: #687783;
+    }
+
+    .academic-certificate-recipient {
+        margin-bottom: 1rem;
+        color: #103e66;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 2.75rem;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .academic-certificate-course-label {
+        margin-bottom: 0.25rem;
+        color: #687783;
+    }
+
+    .academic-certificate-course {
+        color: #173c5b;
+        font-size: 1.55rem;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .academic-certificate-seal {
+        display: inline-grid;
+        width: 9.45rem;
+        height: 9.45rem;
+        place-content: center;
+        margin: 1.25rem auto 0;
+        padding: 1.25rem;
+        border: 1px solid #c4a45d;
+        border-radius: 50%;
+        color: #876b2d;
+        font-size: 0.72rem;
+        font-weight: 750;
+        line-height: 1.35;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .academic-certificate-footer {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        align-items: end;
+        gap: 1rem;
+        border-top: 1px solid #dbe2e8;
+        padding-top: 1.25rem;
+        text-align: left;
+    }
+
+    .academic-certificate-meta-label {
+        display: block;
+        margin-bottom: 0.3rem;
+        color: #687783;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .academic-certificate-signature {
+        text-align: center;
+    }
+
+    .academic-certificate-signature-rule {
+        width: 100%;
+        max-width: 13rem;
+        margin: 0 auto 0.5rem;
+        border-top: 1px solid #81909b;
+    }
+
+    @media (max-width: 700px) {
+        .academic-certificate {
+            min-height: 0;
+            padding: 2.5rem 1.75rem 2rem;
+        }
+
+        .academic-certificate-watermark {
+            font-size: 12rem;
+        }
+
+        .academic-certificate-title {
+            font-size: 1.5rem;
+        }
+
+        .academic-certificate-recipient {
+            font-size: 2rem;
+        }
+
+        .academic-certificate-course {
+            font-size: 1.25rem;
+        }
+
+        .academic-certificate-footer {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .academic-certificate-seal {
+            width: 9rem;
+            height: 9rem;
+        }
+    }
+
+    @media print {
+        body {
+            background: #fff;
+        }
+
+        .site-navbar,
+        .certificate-actions,
+        footer {
+            display: none !important;
+        }
+
+        main.container-xl {
+            max-width: none;
+            padding: 0 !important;
+        }
+
+        .academic-certificate {
+            min-height: 185mm;
+            box-shadow: none;
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+        }
+    }
+</style>
+
+<div class="certificate-actions d-flex flex-wrap gap-2">
     <a class="btn btn-outline-secondary" href="?page=certificates">&larr; Certificates</a>
     <a class="btn btn-primary ms-2" href="?page=certificate-pdf&amp;id=<?= (int) $certificate['id']; ?>">
         Download PDF
     </a>
 </div>
 
-<article class="card border-primary shadow-sm mx-auto" style="max-width: 760px;">
-    <div class="card-body text-center p-4 p-md-5">
-        <p class="small fw-bold text-primary text-uppercase mb-2">Zona AntiPhishing</p>
-        <h1 class="display-6 fw-bold mb-4">Certificate of Completion</h1>
+<article class="academic-certificate" aria-labelledby="certificate-title">
+    <span class="academic-certificate-watermark" aria-hidden="true">ZA</span>
+    <span class="academic-certificate-decoration academic-certificate-decoration-top" aria-hidden="true"></span>
+    <span class="academic-certificate-decoration academic-certificate-decoration-bottom" aria-hidden="true"></span>
+    <header>
+        <p class="academic-certificate-header mb-1">Zona AntiPhishing</p>
+        <p class="academic-certificate-subtitle mb-0">Cybersecurity Awareness Platform</p>
+        <div class="academic-certificate-rule" aria-hidden="true"></div>
+        <h1 id="certificate-title" class="academic-certificate-title mb-4">Certificate of Completion</h1>
+    </header>
 
-        <p class="text-body-secondary mb-1">Awarded To</p>
-        <p class="h3 fw-semibold mb-4">
+    <div>
+        <p class="academic-certificate-recipient-label">This certificate is proudly awarded to</p>
+        <p class="academic-certificate-recipient">
             <?= htmlspecialchars((string) $certificate['user_name'], ENT_QUOTES, 'UTF-8'); ?>
         </p>
-
-        <p class="text-body-secondary mb-1">Course</p>
-        <p class="h4 fw-semibold mb-4">
+        <p class="mb-2">For successfully completing the course</p>
+        <p class="academic-certificate-course mb-3">
             <?= htmlspecialchars((string) $certificate['course_title'], ENT_QUOTES, 'UTF-8'); ?>
         </p>
-
-        <dl class="row text-start border-top pt-4 mb-0">
-            <dt class="col-sm-4 text-body-secondary">Certificate Code</dt>
-            <dd class="col-sm-8 fw-semibold">
-                <?= htmlspecialchars((string) $certificate['certificate_code'], ENT_QUOTES, 'UTF-8'); ?>
-            </dd>
-
-            <dt class="col-sm-4 text-body-secondary">Issued Date</dt>
-            <dd class="col-sm-8 mb-0">
-                <?= htmlspecialchars((string) $certificate['issued_at'], ENT_QUOTES, 'UTF-8'); ?>
-            </dd>
-        </dl>
+        <p class="text-body-secondary mx-auto mb-0" style="max-width: 38rem;">
+            and demonstrating knowledge in phishing awareness, prevention and digital security best practices.
+        </p>
+        <div class="academic-certificate-seal" aria-label="Verified completion">
+            <span>Verified</span>
+            <span>Completion</span>
+        </div>
     </div>
+
+    <footer class="academic-certificate-footer">
+        <div>
+            <span class="academic-certificate-meta-label">Issue Date</span>
+            <span><?= htmlspecialchars($issuedDate, ENT_QUOTES, 'UTF-8'); ?></span>
+        </div>
+        <div>
+            <span class="academic-certificate-meta-label">Certificate ID</span>
+            <span><?= htmlspecialchars((string) $certificate['certificate_code'], ENT_QUOTES, 'UTF-8'); ?></span>
+        </div>
+        <div class="academic-certificate-signature">
+            <div class="academic-certificate-signature-rule" aria-hidden="true"></div>
+            <strong class="d-block">Zona AntiPhishing Team</strong>
+            <span class="small text-body-secondary">Educational Security Program</span>
+        </div>
+    </footer>
 </article>
 
 <?php
