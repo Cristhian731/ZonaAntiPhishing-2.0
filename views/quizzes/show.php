@@ -194,11 +194,11 @@ ob_start();
                 z-index: 2;
                 width: min(920px, calc(100vw - 2rem));
                 padding: 4rem 5rem 3.5rem;
-                border: 1px solid #d6e0e8;
-                border-top: 4px solid #c6a252;
-                background: linear-gradient(145deg, #fff 0%, #f6f9fc 100%);
+                border: 1px solid var(--zap-border);
+                border-top: 4px solid var(--zap-achievement);
+                background: linear-gradient(145deg, var(--zap-surface) 0%, var(--zap-canvas) 100%);
                 box-shadow: 0 2rem 6rem rgb(0 0 0 / 32%);
-                color: #172f43;
+                color: var(--zap-ink);
                 text-align: center;
                 animation: certificate-modal-in 420ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
             }
@@ -211,17 +211,17 @@ ob_start();
                 width: 2.5rem;
                 height: 2.5rem;
                 place-items: center;
-                border: 1px solid #d5dee6;
-                background: #fff;
-                color: #435767;
+                border: 1px solid var(--zap-border);
+                background: var(--zap-surface);
+                color: var(--zap-muted);
                 font-size: 1.55rem;
                 line-height: 1;
             }
 
             .certificate-celebration-close:hover,
             .certificate-celebration-close:focus-visible {
-                border-color: #1976d2;
-                color: #0d47a1;
+                border-color: var(--zap-primary);
+                color: var(--zap-deep);
             }
 
             .certificate-celebration-mark {
@@ -230,9 +230,9 @@ ob_start();
                 height: 4rem;
                 place-items: center;
                 margin: 0 auto 1.25rem;
-                border: 1px solid #c6a252;
+                border: 1px solid var(--zap-achievement);
                 border-radius: 50%;
-                color: #0d3554;
+                color: var(--zap-deep);
                 font-size: 0.95rem;
                 font-weight: 800;
             }
@@ -246,11 +246,11 @@ ob_start();
             }
 
             .certificate-celebration-modal h2 {
-                color: #0d3554;
+                color: var(--zap-deep);
             }
 
             .certificate-celebration-title {
-                color: #172f43;
+                color: var(--zap-ink);
                 font-family: Georgia, 'Times New Roman', serif;
                 font-size: 2.8rem;
                 font-weight: 600;
@@ -262,13 +262,13 @@ ob_start();
             }
 
             .certificate-celebration-course {
-                color: #0d47a1;
+                color: var(--zap-deep);
                 font-weight: 750;
                 overflow-wrap: anywhere;
             }
 
             .certificate-celebration-score {
-                border-top: 1px solid #e0e7ed;
+                border-top: 1px solid var(--zap-border);
                 padding-top: 1rem;
             }
 
@@ -427,7 +427,13 @@ ob_start();
                     return;
                 }
 
-                const colors = ['#0d47a1', '#1976d2', '#c6a252', '#ffffff'];
+                const tokens = getComputedStyle(document.documentElement);
+                const colors = [
+                    tokens.getPropertyValue('--zap-deep').trim(),
+                    tokens.getPropertyValue('--zap-primary').trim(),
+                    tokens.getPropertyValue('--zap-achievement').trim(),
+                    '#ffffff',
+                ];
 
                 for (let index = 0; index < 64; index += 1) {
                     const piece = document.createElement('span');

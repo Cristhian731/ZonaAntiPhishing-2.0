@@ -16,6 +16,12 @@ switch ($page) {
         require_once __DIR__ . '/../views/home/index.php';
         break;
 
+    case 'privacy-policy':
+    case 'terms':
+        $legalDocument = $page;
+        require_once __DIR__ . '/../views/legal.php';
+        break;
+
     case 'login':
         require_once __DIR__ . '/../views/auth/login.php';
         break;

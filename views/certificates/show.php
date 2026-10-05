@@ -53,12 +53,12 @@ ob_start();
         margin: 0 auto;
         padding: 3.5rem 4rem 2.5rem;
         overflow: hidden;
-        border: 1px solid #c4a45d;
-        outline: 1px solid #dce4ec;
+        border: 1px solid var(--zap-achievement);
+        outline: 1px solid var(--zap-border);
         outline-offset: -0.5rem;
-        background: linear-gradient(135deg, #f8fafc 0%, #fff 48%, #f5f8fb 100%);
-        box-shadow: 0 1.25rem 3rem rgb(13 38 59 / 10%);
-        color: #182f43;
+        background: linear-gradient(135deg, var(--zap-canvas) 0%, var(--zap-surface) 48%, #f5f8fb 100%);
+        box-shadow: 0 1.25rem 3rem rgb(13 71 161 / 10%);
+        color: var(--zap-ink);
         text-align: center;
     }
 
@@ -72,7 +72,7 @@ ob_start();
         z-index: 0;
         top: 50%;
         left: 50%;
-        color: #0d3554;
+        color: var(--zap-deep);
         font-family: Georgia, 'Times New Roman', serif;
         font-size: 17rem;
         font-weight: 750;
@@ -89,7 +89,7 @@ ob_start();
         right: 12%;
         left: 12%;
         height: 1px;
-        background: linear-gradient(90deg, transparent, #c4a45d 18%, #c4a45d 82%, transparent);
+        background: linear-gradient(90deg, transparent, var(--zap-achievement) 18%, var(--zap-achievement) 82%, transparent);
     }
 
     .academic-certificate-decoration-top {
@@ -105,7 +105,7 @@ ob_start();
         position: absolute;
         width: 3.25rem;
         height: 3.25rem;
-        border-color: #c4a45d;
+        border-color: var(--zap-achievement);
         border-style: solid;
         content: '';
     }
@@ -123,7 +123,7 @@ ob_start();
     }
 
     .academic-certificate-header {
-        color: #0d3554;
+        color: var(--zap-deep);
         font-size: 1rem;
         font-weight: 750;
         text-transform: uppercase;
@@ -138,7 +138,7 @@ ob_start();
         width: 5rem;
         height: 2px;
         margin: 1.5rem auto 1.75rem;
-        background: #c4a45d;
+        background: var(--zap-achievement);
     }
 
     .academic-certificate-title {
@@ -151,12 +151,12 @@ ob_start();
 
     .academic-certificate-recipient-label {
         margin-bottom: 0.45rem;
-        color: #687783;
+        color: var(--zap-muted);
     }
 
     .academic-certificate-recipient {
         margin-bottom: 1rem;
-        color: #103e66;
+        color: var(--zap-deep);
         font-family: Georgia, 'Times New Roman', serif;
         font-size: 2.75rem;
         font-weight: 600;
@@ -165,11 +165,11 @@ ob_start();
 
     .academic-certificate-course-label {
         margin-bottom: 0.25rem;
-        color: #687783;
+        color: var(--zap-muted);
     }
 
     .academic-certificate-course {
-        color: #173c5b;
+        color: var(--zap-deep);
         font-size: 1.55rem;
         font-weight: 700;
         overflow-wrap: anywhere;
@@ -182,9 +182,9 @@ ob_start();
         place-content: center;
         margin: 1.25rem auto 0;
         padding: 1.25rem;
-        border: 1px solid #c4a45d;
+        border: 1px solid var(--zap-achievement);
         border-radius: 50%;
-        color: #876b2d;
+        color: #806321;
         font-size: 0.72rem;
         font-weight: 750;
         line-height: 1.35;
@@ -206,7 +206,7 @@ ob_start();
     .academic-certificate-meta-label {
         display: block;
         margin-bottom: 0.3rem;
-        color: #687783;
+        color: var(--zap-muted);
         font-size: 0.72rem;
         font-weight: 700;
         letter-spacing: 0.06em;
@@ -221,7 +221,7 @@ ob_start();
         width: 100%;
         max-width: 13rem;
         margin: 0 auto 0.5rem;
-        border-top: 1px solid #81909b;
+        border-top: 1px solid var(--zap-muted);
     }
 
     @media (max-width: 700px) {
@@ -284,7 +284,7 @@ ob_start();
 
 <div class="certificate-actions d-flex flex-wrap gap-2">
     <a class="btn btn-outline-secondary" href="?page=certificates">&larr; Certificates</a>
-    <a class="btn btn-primary ms-2" href="?page=certificate-pdf&amp;id=<?= (int) $certificate['id']; ?>">
+    <a class="btn btn-achievement ms-2" href="?page=certificate-pdf&amp;id=<?= (int) $certificate['id']; ?>">
         Download PDF
     </a>
 </div>

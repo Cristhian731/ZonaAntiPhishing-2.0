@@ -12,6 +12,11 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!CsrfService::validateToken($_POST['csrf_token'] ?? null)) {
         $message = 'Your session expired or the request could not be verified. Please try again.';
+    } elseif (
+        ($_POST['accept_privacy'] ?? null) !== '1'
+        || ($_POST['accept_terms'] ?? null) !== '1'
+    ) {
+        $message = 'Please accept the Privacy Policy and Terms of Service to create an account.';
     } else {
         $auth = new AuthController();
 
@@ -173,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .auth-form-wrap {
             width: 100%;
-            max-width: 430px;
+            max-width: 470px;
         }
 
         .back-link,
@@ -218,6 +223,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-control:focus {
             border-color: var(--green);
             box-shadow: 0 0 0 0.2rem rgb(30 101 89 / 15%);
+        }
+
+        .policy-consent {
+            padding: 0.85rem 0 0;
+            border: 0;
+            border-top: 1px solid #d8e0d9;
+        }
+
+        .policy-consent .form-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.35rem;
+            padding-left: 1.5rem;
+        }
+
+        .policy-consent .form-check-input {
+            flex: 0 0 auto;
+            margin-top: 0.28rem;
+            margin-left: -1.5rem;
+        }
+
+        .policy-consent .form-check-label {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .policy-consent a {
+            color: var(--green);
+            font-weight: 700;
+            text-underline-offset: 0.15em;
         }
 
         .btn-auth {
@@ -320,11 +356,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input class="form-control" type="email" id="email" name="email" autocomplete="email" required>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-3">
                         <label class="form-label" for="password">Password</label>
                         <input class="form-control" type="password" id="password" name="password"
                             autocomplete="new-password" required>
                     </div>
+
+                    <fieldset class="policy-consent mb-4">
+                        <legend class="visually-hidden">Required agreements</legend>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="accept-privacy"
+                                name="accept_privacy" value="1" required>
+                            <label class="form-check-label" for="accept-privacy">
+                                I have read and accept the
+                                <a href="?page=privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>.
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="accept-terms"
+                                name="accept_terms" value="1" required>
+                            <label class="form-check-label" for="accept-terms">
+                                I have read and accept the
+                                <a href="?page=terms" target="_blank" rel="noopener">Terms of Service</a>.
+                            </label>
+                        </div>
+                    </fieldset>
 
                     <button class="btn btn-auth w-100" type="submit">Register</button>
                 </form>

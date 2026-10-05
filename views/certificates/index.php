@@ -54,7 +54,7 @@ ob_start();
 
             <div class="col">
 
-                <div class="card dashboard-stat shadow-sm">
+                <div class="card dashboard-stat achievement-card shadow-sm">
 
                     <div class="card-body">
 
@@ -77,7 +77,7 @@ ob_start();
                             <?= htmlspecialchars((string) ($certificate['issued_at'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>
                         </p>
 
-                        <a class="btn btn-primary" href="?page=certificate&amp;id=<?= (int) $certificate['id']; ?>">
+                        <a class="btn btn-achievement" href="?page=certificate&amp;id=<?= (int) $certificate['id']; ?>">
                             View Certificate
                         </a>
 

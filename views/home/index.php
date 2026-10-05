@@ -271,6 +271,144 @@ $registerLabel = $isAuthenticated ? 'Explore Courses' : 'Register';
             background: #e8efea;
         }
 
+        .trust-section {
+            background: var(--white);
+        }
+
+        .trust-card {
+            height: 100%;
+            padding: 1.35rem;
+            border: 1px solid var(--line);
+            border-radius: 0.4rem;
+            background: var(--paper);
+        }
+
+        .trust-card h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+
+        .trust-card p {
+            margin-bottom: 0;
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        .pricing-section {
+            background: var(--paper);
+        }
+
+        .pricing-card {
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+            padding: 1.6rem;
+            border: 1px solid var(--line);
+            border-top: 4px solid var(--green);
+            border-radius: 0.4rem;
+            background: var(--white);
+            box-shadow: 0 0.35rem 1.1rem rgb(23 52 54 / 7%);
+        }
+
+        .pricing-card-premium {
+            position: relative;
+            border: 2px solid var(--coral);
+            border-top-width: 5px;
+            background: linear-gradient(180deg, #fff8f4 0%, var(--white) 42%);
+            box-shadow: 0 0.8rem 2rem rgb(23 52 54 / 12%);
+        }
+
+        .pricing-card-business {
+            border-top-color: var(--green-deep);
+        }
+
+        .pricing-badges {
+            display: flex;
+            min-height: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .pricing-status {
+            width: fit-content;
+            border-radius: 999px;
+            background: #e8efea;
+            color: var(--green-deep);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            padding: 0.35rem 0.65rem;
+            text-transform: uppercase;
+        }
+
+        .pricing-status-coming {
+            background: #f9e8e1;
+            color: #71301f;
+        }
+
+        .pricing-status-popular {
+            background: var(--coral);
+            color: #201c19;
+        }
+
+        .pricing-status-business {
+            background: var(--green-deep);
+            color: var(--white);
+        }
+
+        .pricing-positioning {
+            max-width: 800px;
+            color: var(--muted);
+            font-size: 1.02rem;
+            line-height: 1.7;
+        }
+
+        .pricing-positioning strong {
+            color: var(--green-deep);
+        }
+
+        .pricing-card .pricing-description {
+            min-height: 3.2rem;
+        }
+
+        .pricing-value {
+            margin: 1rem 0;
+            color: var(--green-deep);
+            font-size: 1.65rem;
+            font-weight: 850;
+        }
+
+        .pricing-copy,
+        .pricing-card li {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .pricing-card ul {
+            padding-left: 1.1rem;
+        }
+
+        .pricing-card li + li {
+            margin-top: 0.45rem;
+        }
+
+        .pricing-card .btn {
+            margin-top: auto;
+        }
+
+        @media (min-width: 768px) {
+            .pricing-card-premium {
+                transform: translateY(-0.5rem);
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .pricing-card .pricing-description {
+                min-height: 0;
+            }
+        }
+
         .advantage-quote {
             border-left: 4px solid var(--coral);
             padding-left: 1.25rem;
@@ -341,6 +479,7 @@ $registerLabel = $isAuthenticated ? 'Explore Courses' : 'Register';
                     <div class="navbar-nav site-nav ms-auto align-items-lg-center gap-lg-2 py-3 py-lg-0">
                         <a class="nav-link" href="#features">Features</a>
                         <a class="nav-link" href="#how-it-works">How It Works</a>
+                        <a class="nav-link" href="#pricing">Pricing</a>
                         <a class="nav-link" href="?page=login">Login</a>
                         <a class="btn btn-brand ms-lg-2"
                             href="<?= htmlspecialchars($registerUrl, ENT_QUOTES, 'UTF-8'); ?>">
@@ -510,6 +649,117 @@ $registerLabel = $isAuthenticated ? 'Explore Courses' : 'Register';
             </div>
         </section>
 
+        <section class="trust-section section-space" id="trust" aria-labelledby="trust-title">
+            <div class="container-xl">
+                <p class="section-kicker mb-2">Trust and transparency</p>
+                <h2 class="section-heading mb-4" id="trust-title">A learning platform built around safer habits.</h2>
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3">
+                    <div class="col">
+                        <article class="trust-card">
+                            <h3>Educational by design</h3>
+                            <p>Learn to recognize phishing; the platform is not an antivirus or a guarantee that a link is safe.</p>
+                        </article>
+                    </div>
+                    <div class="col">
+                        <article class="trust-card">
+                            <h3>Learn, practice, achieve</h3>
+                            <p>Build understanding with courses and practice, then track learning achievements and certificates.</p>
+                        </article>
+                    </div>
+                    <div class="col">
+                        <article class="trust-card">
+                            <h3>Privacy matters</h3>
+                            <p>Account details support sign-in; learning activity supports your progress and earned certificates.</p>
+                        </article>
+                    </div>
+                    <div class="col">
+                        <article class="trust-card">
+                            <h3>Security-oriented</h3>
+                            <p>Practice identifying warning signs and make informed decisions before trusting messages or links.</p>
+                        </article>
+                    </div>
+                </div>
+                <p class="small text-secondary mt-3 mb-0">
+                    Read our <a href="?page=privacy-policy">Privacy Policy</a> and
+                    <a href="?page=terms">Terms of Service</a>.
+                </p>
+            </div>
+        </section>
+
+        <section class="pricing-section section-space" id="pricing" aria-labelledby="pricing-title">
+            <div class="container-xl">
+                <p class="section-kicker mb-2">Flexible learning paths</p>
+                <h2 class="section-heading mb-3" id="pricing-title">Start free. Grow your security awareness over time.</h2>
+                <p class="pricing-positioning mb-4">
+                    Our long-term model is designed to keep core learning accessible through Free, with optional
+                    <strong>individual Premium learning</strong> and <strong>Business training for organizations</strong>
+                    as the platform grows. Premium and Business are planned offerings only: there is no payment,
+                    subscription, or paid access today.
+                </p>
+                <div class="row row-cols-1 row-cols-md-3 g-3">
+                    <div class="col">
+                        <article class="pricing-card">
+                            <div class="pricing-badges">
+                                <span class="pricing-status">Available now</span>
+                            </div>
+                            <h3 class="h4 fw-bold mt-3 mb-0">Free</h3>
+                            <p class="pricing-value">Free today</p>
+                            <p class="pricing-copy pricing-description">A complete starting point for building everyday phishing awareness.</p>
+                            <ul class="mb-4">
+                                <li>Available foundational courses and quizzes</li>
+                                <li>Interactive simulations and URL analysis</li>
+                                <li>Learning progress tracking</li>
+                                <li>Educational course-completion certificates</li>
+                            </ul>
+                            <a class="btn btn-brand" href="<?= htmlspecialchars($registerUrl, ENT_QUOTES, 'UTF-8'); ?>">
+                                <?= htmlspecialchars($registerLabel, ENT_QUOTES, 'UTF-8'); ?>
+                            </a>
+                        </article>
+                    </div>
+                    <div class="col">
+                        <article class="pricing-card pricing-card-premium" aria-label="Premium, most popular future plan">
+                            <div class="pricing-badges">
+                                <span class="pricing-status pricing-status-coming">Coming Soon</span>
+                                <span class="pricing-status pricing-status-popular">Most Popular Future Plan</span>
+                            </div>
+                            <h3 class="h4 fw-bold mt-3 mb-0">Premium</h3>
+                            <p class="pricing-value">For individual learners</p>
+                            <p class="pricing-copy pricing-description">A deeper, more structured learning journey for people who want to build advanced phishing-defense skills.</p>
+                            <ul class="mb-4">
+                                <li>Everything in Free</li>
+                                <li>Advanced phishing courses</li>
+                                <li>Advanced simulations</li>
+                                <li>Expanded learning paths</li>
+                                <li>Premium certificates</li>
+                                <li>Detailed progress reports</li>
+                            </ul>
+                            <span class="small text-secondary mt-auto">Future concept. Not available for purchase yet.</span>
+                        </article>
+                    </div>
+                    <div class="col">
+                        <article class="pricing-card pricing-card-business">
+                            <div class="pricing-badges">
+                                <span class="pricing-status pricing-status-coming">Coming Soon</span>
+                                <span class="pricing-status pricing-status-business">For Organizations</span>
+                            </div>
+                            <h3 class="h4 fw-bold mt-3 mb-0">Business</h3>
+                            <p class="pricing-value">For teams</p>
+                            <p class="pricing-copy pricing-description">A future organization-focused offer to help teams build consistent security awareness together.</p>
+                            <ul class="mb-4">
+                                <li>Everything in Premium</li>
+                                <li>Team training</li>
+                                <li>Group learning</li>
+                                <li>Organization dashboard</li>
+                                <li>Corporate certificates</li>
+                                <li>Awareness training programs</li>
+                            </ul>
+                            <span class="small text-secondary mt-auto">Future concept. Not available for purchase yet.</span>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="cta-section section-space" aria-labelledby="cta-title">
             <div
                 class="container-xl d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-4">
@@ -528,9 +778,22 @@ $registerLabel = $isAuthenticated ? 'Explore Courses' : 'Register';
     </main>
 
     <footer class="footer py-4">
-        <div class="container-xl d-flex flex-column flex-sm-row justify-content-between gap-2">
-            <span>Zona AntiPhishing</span>
-            <span>Learn to recognize phishing. Practice safer decisions.</span>
+        <div class="container-xl">
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                <div>
+                    <p class="fw-bold mb-1">Zona AntiPhishing</p>
+                    <p class="small mb-0">Learn to recognize phishing. Practice safer decisions.</p>
+                </div>
+                <nav class="d-flex flex-wrap gap-3" aria-label="Footer navigation">
+                    <a href="#pricing">Pricing</a>
+                    <a href="?page=privacy-policy">Privacy Policy</a>
+                    <a href="?page=terms">Terms of Service</a>
+                    <a href="#contact">Contact</a>
+                </nav>
+            </div>
+            <div id="contact" class="small mt-3 pt-3 border-top border-light border-opacity-25">
+                Contact details are not published yet. Please check back for updates.
+            </div>
         </div>
     </footer>
 

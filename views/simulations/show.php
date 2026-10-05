@@ -105,11 +105,11 @@ $simulationTitle = htmlspecialchars((string) ($simulation['title'] ?? 'Simulatio
 ob_start();
 ?>
 
-<header class="mb-4 mb-lg-5">
+<header class="simulation-hero p-4 p-lg-5 mb-4 mb-lg-5">
     <a class="link-primary text-decoration-none fw-semibold" href="?page=simulations">&larr; Back to simulations</a>
 
     <div class="mt-4">
-        <p class="small fw-bold text-primary text-uppercase mb-2">Phishing recognition exercise</p>
+        <p class="small fw-bold text-primary text-uppercase mb-2">Simulation Training</p>
         <h1 class="display-6 fw-bold mb-2"><?= $simulationTitle; ?></h1>
         <p class="text-body-secondary mb-0">
             <?= htmlspecialchars((string) ($simulation['description'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>
@@ -128,28 +128,33 @@ ob_start();
         This simulation is not configured with five scenarios yet.
     </div>
 <?php elseif (is_array($result)): ?>
-    <section class="border bg-white p-4 p-lg-5" aria-labelledby="simulation-result-title">
-        <p class="small fw-bold text-primary text-uppercase mb-2">Final result</p>
-        <h2 id="simulation-result-title" class="h2 fw-bold mb-3">Simulation Completed</h2>
-        <p class="h4 mb-2">
-            Correct Decisions:
-            <strong><?= (int) $result['correct_count']; ?>/<?= (int) $result['total_scenarios']; ?></strong>
-        </p>
-        <p class="mb-4">
-            <span class="badge <?= $result['passed'] ? 'text-bg-success' : 'text-bg-secondary'; ?> fs-6">
-                <?= $result['passed'] ? 'Passed' : 'Failed'; ?>
-            </span>
-            <span class="text-body-secondary ms-2">Score: <?= (int) $result['score']; ?>%</span>
-        </p>
+    <section class="card dashboard-stat simulation-outcome p-4 p-lg-5" aria-labelledby="simulation-result-title">
+        <div class="simulation-completion-hero d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4 mb-4">
+            <div>
+                <p class="small fw-bold text-primary text-uppercase mb-2">Training complete</p>
+                <h2 id="simulation-result-title" class="h2 fw-bold mb-3">Simulation Completed</h2>
+                <span class="badge <?= $result['passed'] ? 'text-bg-success' : 'text-bg-secondary'; ?> fs-6">
+                    <?= $result['passed'] ? 'Passed' : 'Review and try again'; ?>
+                </span>
+            </div>
+            <div class="simulation-score-card">
+                <span class="small fw-bold text-uppercase">Your score</span>
+                <strong><?= (int) $result['score']; ?><span>%</span></strong>
+                <span><?= (int) $result['correct_count']; ?> of <?= (int) $result['total_scenarios']; ?> decisions correct</span>
+            </div>
+        </div>
 
-        <h3 class="h5 fw-bold mb-3">Lessons Learned</h3>
+        <div class="simulation-reflection-heading">
+            <p class="small fw-bold text-primary text-uppercase mb-2">Take it with you</p>
+            <h3 class="h4 fw-bold mb-3">Lessons Learned</h3>
+        </div>
         <ol class="list-group list-group-numbered mb-4">
             <?php foreach ($result['decisions'] as $decision): ?>
                 <?php
                 $decisionExplanation = htmlspecialchars((string) ($decision['explanation'] ?? ''), ENT_QUOTES, 'UTF-8');
                 $decisionNumber = (int) ($decision['step_order'] ?? 0);
                 ?>
-                <li class="list-group-item px-3 py-3">
+                <li class="list-group-item simulation-reflection-item px-3 py-3">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
                         <strong>Scenario <?= $decisionNumber; ?></strong>
                         <span class="badge <?= $decision['correct'] ? 'text-bg-success' : 'text-bg-warning'; ?>">
@@ -179,14 +184,25 @@ ob_start();
     $scenarioText = htmlspecialchars((string) ($currentScenario['scenario_text'] ?? ''), ENT_QUOTES, 'UTF-8');
     $progressPercent = (int) round(($stepOrder / 5) * 100);
     ?>
-    <section aria-labelledby="simulation-progress-title" class="mb-4">
-        <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
-            <h2 id="simulation-progress-title" class="h6 fw-bold mb-0">Scenario <?= $stepOrder; ?> of 5</h2>
-            <span class="small text-body-secondary"><?= $progressPercent; ?>%</span>
+    <section class="simulation-step-panel simulation-briefing p-3 p-md-4 mb-4"
+        aria-labelledby="simulation-progress-title">
+        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+            <div>
+                <p class="small fw-bold text-primary text-uppercase mb-1">Training progression</p>
+                <h2 id="simulation-progress-title" class="h5 fw-bold mb-0">
+                    Scenario <?= $stepOrder; ?> <span class="text-body-secondary fw-normal">of 5</span>
+                </h2>
+            </div>
+            <span class="simulation-progress-percent"><?= $progressPercent; ?>%</span>
         </div>
         <div class="progress" role="progressbar" aria-label="Simulation progress" aria-valuenow="<?= $stepOrder; ?>"
             aria-valuemin="1" aria-valuemax="5">
             <div class="progress-bar" style="width: <?= $progressPercent; ?>%"></div>
+        </div>
+        <div class="simulation-step-markers mt-2" aria-hidden="true">
+            <?php for ($progressStep = 1; $progressStep <= 5; $progressStep++): ?>
+                <span class="<?= $progressStep <= $stepOrder ? 'is-reached' : ''; ?>"></span>
+            <?php endfor; ?>
         </div>
     </section>
 
@@ -196,16 +212,18 @@ ob_start();
         <input type="hidden" name="step_order" value="<?= $stepOrder; ?>">
         <input type="hidden" name="scenario_id" value="<?= $scenarioId; ?>">
 
-        <section class="card dashboard-stat mb-4 shadow-sm" aria-labelledby="scenario-title">
+        <section class="card dashboard-stat simulation-scenario-card mb-4 shadow-sm" aria-labelledby="scenario-title">
             <div class="card-body p-4 p-lg-5">
-                <p class="small fw-bold text-primary text-uppercase mb-3">Review the situation</p>
-                <div id="scenario-title" class="fs-5 mb-4"><?= nl2br($scenarioText); ?></div>
+                <p class="simulation-briefing-label small fw-bold text-primary text-uppercase mb-3">
+                    Field briefing <span aria-hidden="true">/ 0<?= $stepOrder; ?></span>
+                </p>
+                <div id="scenario-title" class="simulation-scenario-text fs-5 mb-4"><?= nl2br($scenarioText); ?></div>
 
-                <fieldset>
-                    <legend class="h5 fw-bold mb-3">Is this phishing?</legend>
+                <fieldset class="simulation-decision">
+                    <legend class="h5 fw-bold mb-3">Make your assessment</legend>
 
                     <div class="d-flex flex-column flex-sm-row gap-3">
-                        <div class="form-check border rounded-2 px-5 py-3 flex-fill">
+                        <div class="form-check simulation-choice border rounded-2 px-5 py-3 flex-fill">
                             <input class="form-check-input" type="radio" name="answer" id="answer-phishing" value="phishing"
                                 required>
                             <label class="form-check-label w-100 fw-semibold" for="answer-phishing">
@@ -213,7 +231,7 @@ ob_start();
                             </label>
                         </div>
 
-                        <div class="form-check border rounded-2 px-5 py-3 flex-fill">
+                        <div class="form-check simulation-choice border rounded-2 px-5 py-3 flex-fill">
                             <input class="form-check-input" type="radio" name="answer" id="answer-legitimate"
                                 value="legitimate" required>
                             <label class="form-check-label w-100 fw-semibold" for="answer-legitimate">

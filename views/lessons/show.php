@@ -99,39 +99,47 @@ $activePage = 'courses';
 ob_start();
 ?>
 
-<header class="mb-4 mb-lg-5">
+<header class="learning-sequence-header p-4 p-lg-5 mb-4 mb-lg-5">
     <a class="link-primary text-decoration-none fw-semibold" href="?page=course&amp;id=<?= $courseId; ?>">
         Back to <?= htmlspecialchars((string) ($course['title'] ?? 'course'), ENT_QUOTES, 'UTF-8'); ?>
     </a>
 
     <div class="mt-4">
-        <p class="small fw-bold text-primary text-uppercase mb-2">
-            Lesson <?= $lessonPosition + 1; ?> of <?= count($lessons); ?>
+        <p class="small fw-bold text-primary text-uppercase mb-3 learning-course-name">
+            <?= htmlspecialchars((string) ($course['title'] ?? 'Course'), ENT_QUOTES, 'UTF-8'); ?>
         </p>
-        <h1 class="display-6 fw-bold mb-2">
+        <h1 class="display-5 fw-bold mb-3 learning-lesson-title">
             <?= htmlspecialchars((string) ($lesson['title'] ?? 'Untitled lesson'), ENT_QUOTES, 'UTF-8'); ?>
         </h1>
         <div class="d-flex flex-wrap align-items-center gap-3 text-body-secondary">
-            <a class="link-secondary" href="?page=course&amp;id=<?= $courseId; ?>">
-                <?= htmlspecialchars((string) ($course['title'] ?? 'Course'), ENT_QUOTES, 'UTF-8'); ?>
-            </a>
-            <span aria-label="Estimated duration">
-                <?= $estimatedMinutes > 0 ? $estimatedMinutes . ' min' : 'Duration not set'; ?>
+            <span class="badge text-bg-light border text-dark px-3 py-2">
+                Lesson <?= $lessonPosition + 1; ?> of <?= count($lessons); ?>
+            </span>
+            <span class="learning-reading-time" aria-label="Estimated reading time">
+                <?= $estimatedMinutes > 0 ? $estimatedMinutes . ' min read' : 'Reading time not set'; ?>
             </span>
         </div>
+        <div class="learning-sequence-progress mt-4" aria-label="Position in course">
+            <div class="progress" role="progressbar" aria-label="Course sequence position"
+                aria-valuenow="<?= $lessonPosition + 1; ?>" aria-valuemin="1" aria-valuemax="<?= count($lessons); ?>">
+                <div class="progress-bar"
+                    style="width: <?= (int) round((($lessonPosition + 1) / max(1, count($lessons))) * 100); ?>%"></div>
+            </div>
+        </div>
+        <section class="lesson-objective mt-4 mt-lg-5 p-3 p-lg-4"
+            aria-labelledby="lesson-summary-title">
+            <p class="small fw-bold text-primary text-uppercase mb-2">Learning objective</p>
+            <h2 id="lesson-summary-title" class="h5 fw-bold mb-2">Key ideas</h2>
+            <?php if ($summary !== ''): ?>
+                <p class="mb-0"><?= nl2br(htmlspecialchars($summary, ENT_QUOTES, 'UTF-8')); ?></p>
+            <?php else: ?>
+                <p class="mb-0 text-body-secondary">An objective has not been provided for this lesson yet.</p>
+            <?php endif; ?>
+        </section>
     </div>
 </header>
 
-<?php if ($summary !== ''): ?>
-    <section class="alert alert-light border mb-4" aria-labelledby="lesson-summary-title">
-        <h2 id="lesson-summary-title" class="h5 fw-bold">Summary</h2>
-        <p class="mb-0">
-            <?= nl2br(htmlspecialchars($summary, ENT_QUOTES, 'UTF-8')); ?>
-        </p>
-    </section>
-<?php endif; ?>
-
-<article class="card dashboard-stat shadow-sm mb-4" aria-labelledby="lesson-content-title">
+<article class="card dashboard-stat lesson-content-card shadow-sm mb-4" aria-labelledby="lesson-content-title">
     <div class="card-body p-4 p-lg-5">
         <h2 id="lesson-content-title" class="h4 fw-bold mb-4">Lesson content</h2>
         <?php if ($lessonContent === ''): ?>
@@ -196,28 +204,42 @@ ob_start();
     </div>
 </article>
 
-<nav class="d-flex flex-column flex-sm-row justify-content-between gap-2 mb-4" aria-label="Lesson navigation">
+<section class="quiz-transition p-4 p-lg-5 mb-4" aria-labelledby="lesson-quiz-title">
+    <?php if ($quiz): ?>
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
+            <div>
+                <p class="small fw-bold text-primary text-uppercase mb-2">Knowledge check</p>
+                <h2 id="lesson-quiz-title" class="h3 fw-bold mb-2">Ready to test what you&apos;ve learned?</h2>
+                <p class="text-body-secondary mb-0">Apply these ideas in a short quiz, then continue learning.</p>
+            </div>
+            <a class="btn btn-primary btn-lg quiz-transition-cta flex-shrink-0"
+                href="?page=quiz&amp;lesson_id=<?= (int) $lessonId; ?>">
+                Start Quiz <span aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+    <?php else: ?>
+        <h2 id="lesson-quiz-title" class="h5 fw-bold mb-2">Check your understanding</h2>
+        <p class="text-body-secondary mb-0">No quiz available for this lesson yet.</p>
+    <?php endif; ?>
+</section>
+
+<nav class="lesson-navigation d-flex flex-column flex-sm-row justify-content-between gap-2 mb-4"
+    aria-label="Lesson navigation">
     <div>
         <?php if ($previousLesson): ?>
-            <a class="btn btn-outline-primary" href="?page=lesson&amp;id=<?= (int) $previousLesson['id']; ?>">Previous
-                lesson</a>
+            <a class="btn btn-outline-primary" href="?page=lesson&amp;id=<?= (int) $previousLesson['id']; ?>">
+                &larr; Previous lesson
+            </a>
         <?php endif; ?>
     </div>
     <div>
         <?php if ($nextLesson): ?>
-            <a class="btn btn-outline-primary" href="?page=lesson&amp;id=<?= (int) $nextLesson['id']; ?>">Next lesson</a>
+            <a class="btn btn-outline-primary" href="?page=lesson&amp;id=<?= (int) $nextLesson['id']; ?>">
+                Continue to next lesson <span aria-hidden="true">&rarr;</span>
+            </a>
         <?php endif; ?>
     </div>
 </nav>
-
-<section class="border-top pt-4" aria-labelledby="lesson-quiz-title">
-    <h2 id="lesson-quiz-title" class="h5 fw-bold mb-3">Check your understanding</h2>
-    <?php if ($quiz): ?>
-        <a class="btn btn-primary" href="?page=quiz&amp;lesson_id=<?= (int) $lessonId; ?>">Start Quiz</a>
-    <?php else: ?>
-        <p class="text-body-secondary mb-0">No quiz available for this lesson yet</p>
-    <?php endif; ?>
-</section>
 
 <?php
 $content = ob_get_clean();

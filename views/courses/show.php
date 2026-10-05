@@ -35,23 +35,42 @@ $title = (string) ($course['title'] ?? 'Course') . ' | Zona AntiPhishing';
 $activePage = 'courses';
 $courseTitle = htmlspecialchars((string) ($course['title'] ?? 'Untitled course'), ENT_QUOTES, 'UTF-8');
 $courseDescription = htmlspecialchars((string) ($course['description'] ?? ''), ENT_QUOTES, 'UTF-8');
-$courseLevel = htmlspecialchars(ucfirst((string) ($course['level'] ?? 'beginner')), ENT_QUOTES, 'UTF-8');
+$courseLevelValue = strtolower(trim((string) ($course['level'] ?? 'beginner')));
+$courseLevel = htmlspecialchars(ucfirst($courseLevelValue), ENT_QUOTES, 'UTF-8');
+$courseLevelClass = in_array($courseLevelValue, ['beginner', 'intermediate', 'advanced'], true)
+    ? 'course-level-' . $courseLevelValue
+    : '';
+$lessonCount = count($lessons);
 
 ob_start();
 ?>
 
-<header class="mb-4 mb-lg-5">
+<header class="course-hero course-detail-hero p-4 p-lg-5 mb-4 mb-lg-5">
     <a class="link-primary text-decoration-none fw-semibold" href="?page=courses">&larr; Back to courses</a>
 
     <div class="mt-4">
-        <p class="small fw-bold text-primary text-uppercase mb-2">Course details</p>
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3">
-            <h1 class="display-6 fw-bold mb-0"><?= $courseTitle; ?></h1>
-            <span class="badge text-bg-primary fs-6"><?= $courseLevel; ?></span>
+        <p class="small fw-bold text-primary text-uppercase mb-3">Professional learning path</p>
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-4">
+            <div class="flex-grow-1 course-detail-copy">
+                <h1 class="display-5 fw-bold mb-3"><?= $courseTitle; ?></h1>
+                <p class="course-detail-description text-body-secondary mb-0">
+                    <?= $courseDescription !== '' ? nl2br($courseDescription) : 'No description available.'; ?>
+                </p>
+            </div>
+            <span class="course-level-badge course-detail-level <?= $courseLevelClass; ?>">
+                <?= $courseLevel; ?>
+            </span>
         </div>
-        <?php if ($courseDescription !== ''): ?>
-            <p class="text-body-secondary mt-3 mb-0"><?= nl2br($courseDescription); ?></p>
-        <?php endif; ?>
+
+        <div class="course-detail-footer d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 mt-4 mt-lg-5">
+            <span class="course-detail-count">
+                <strong><?= $lessonCount; ?></strong>
+                <?= $lessonCount === 1 ? 'lesson' : 'lessons'; ?> in this course
+            </span>
+            <a class="btn btn-primary btn-lg course-detail-cta" href="#lessons-title">
+                Explore lessons <span aria-hidden="true">&darr;</span>
+            </a>
+        </div>
     </div>
 </header>
 
@@ -61,8 +80,8 @@ ob_start();
             <h2 id="lessons-title" class="h4 fw-bold mb-1">Lessons</h2>
             <p class="small text-body-secondary mb-0">Work through the lessons in order.</p>
         </div>
-        <span class="badge rounded-pill text-bg-light border text-dark">
-            <?= count($lessons); ?> <?= count($lessons) === 1 ? 'lesson' : 'lessons'; ?>
+        <span class="badge rounded-pill text-bg-light border text-dark px-3 py-2">
+            <?= $lessonCount; ?> <?= $lessonCount === 1 ? 'lesson' : 'lessons'; ?>
         </span>
     </div>
 
@@ -78,20 +97,23 @@ ob_start();
                 $estimatedMinutes = max(0, (int) ($lesson['estimated_minutes'] ?? 0));
                 ?>
                 <div class="col">
-                    <article class="card dashboard-stat h-100 shadow-sm">
+                    <article class="card dashboard-stat course-lesson-card h-100 shadow-sm">
                         <div class="card-body d-flex align-items-start gap-3 p-4">
-                            <span class="badge rounded-pill text-bg-light border text-dark">
+                            <span class="course-lesson-number" aria-hidden="true">
                                 <?= (int) $index + 1; ?>
                             </span>
-                            <div class="flex-grow-1">
+                            <div class="flex-grow-1 course-lesson-copy">
+                                <p class="small fw-bold text-primary text-uppercase mb-2">
+                                    Lesson <?= (int) $index + 1; ?>
+                                </p>
                                 <h3 class="h5 fw-bold mb-2"><?= $lessonTitle; ?></h3>
                                 <p class="small text-body-secondary mb-0">
-                                    <?= $estimatedMinutes > 0 ? $estimatedMinutes . ' min' : 'Duration not set'; ?>
+                                    <?= $estimatedMinutes > 0 ? $estimatedMinutes . ' min read' : 'Reading time not set'; ?>
                                 </p>
                                 <div class="mt-3">
-                                    <a class="btn btn-primary btn-sm"
+                                    <a class="btn btn-outline-primary btn-sm"
                                         href="?page=lesson&amp;id=<?= (int) ($lesson['id'] ?? 0); ?>">
-                                        View Lesson
+                                        Start lesson <span aria-hidden="true">&rarr;</span>
                                     </a>
                                 </div>
                             </div>

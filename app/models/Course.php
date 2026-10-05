@@ -12,13 +12,25 @@ class Course
         $this->conn = $database->connect();
     }
 
-    public function getAllCourses()
+    public function getAllCourses(int $userId = 0): array
     {
-        $sql = "SELECT * FROM courses";
+        $sql = "SELECT courses.*,
+                       (SELECT COUNT(*)
+                        FROM lessons
+                        WHERE lessons.course_id = courses.id) AS lesson_count,
+                       (SELECT COUNT(*)
+                        FROM lessons
+                        INNER JOIN user_progress
+                            ON user_progress.lesson_id = lessons.id
+                            AND user_progress.user_id = :user_id
+                            AND user_progress.completed = 1
+                        WHERE lessons.course_id = courses.id) AS completed_lessons
+                FROM courses
+                ORDER BY courses.id ASC";
 
         $stmt = $this->conn->prepare($sql);
 
-        $stmt->execute();
+        $stmt->execute(['user_id' => $userId]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

@@ -43,21 +43,37 @@ ob_start();
             <?php
             $courseTitle = htmlspecialchars((string) ($course['title'] ?? 'Untitled course'), ENT_QUOTES, 'UTF-8');
             $courseDescription = htmlspecialchars((string) ($course['description'] ?? ''), ENT_QUOTES, 'UTF-8');
-            $courseLevel = htmlspecialchars(ucfirst((string) ($course['level'] ?? 'beginner')), ENT_QUOTES, 'UTF-8');
+            $courseLevelValue = strtolower(trim((string) ($course['level'] ?? 'beginner')));
+            $courseLevel = htmlspecialchars(ucfirst($courseLevelValue), ENT_QUOTES, 'UTF-8');
+            $courseLevelClass = in_array($courseLevelValue, ['beginner', 'intermediate', 'advanced'], true)
+                ? 'course-level-' . $courseLevelValue
+                : '';
+            $lessonCount = max(0, (int) ($course['lesson_count'] ?? 0));
             ?>
             <div class="col">
-                <article class="card dashboard-stat h-100 shadow-sm">
+                <article class="card dashboard-stat course-card h-100 shadow-sm">
                     <div class="card-body d-flex flex-column p-4">
-                        <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
-                            <h2 class="h5 fw-bold mb-0"><?= $courseTitle; ?></h2>
-                            <span class="badge text-bg-primary flex-shrink-0"><?= $courseLevel; ?></span>
+                        <div class="d-flex justify-content-between align-items-center gap-3 mb-4">
+                            <span class="course-card-kicker">Course <?= (int) ($course['id'] ?? 0); ?></span>
+                            <span class="course-level-badge <?= $courseLevelClass; ?> flex-shrink-0">
+                                <?= $courseLevel; ?>
+                            </span>
                         </div>
-                        <p class="card-text text-body-secondary mb-0">
+                        <h2 class="h4 fw-bold mb-3 course-card-title"><?= $courseTitle; ?></h2>
+                        <p class="card-text text-body-secondary course-card-description mb-4">
                             <?= $courseDescription !== '' ? $courseDescription : 'No description available.'; ?>
                         </p>
+                        <div class="course-card-meta d-flex align-items-center gap-3 mb-4">
+                            <span class="course-card-meta-mark" aria-hidden="true"></span>
+                            <div>
+                                <span class="small text-body-secondary d-block">Course content</span>
+                                <strong><?= $lessonCount; ?> <?= $lessonCount === 1 ? 'lesson' : 'lessons'; ?></strong>
+                            </div>
+                        </div>
                         <div class="mt-auto pt-4">
-                            <a class="btn btn-primary" href="?page=course&amp;id=<?= (int) ($course['id'] ?? 0); ?>">
-                                View Course
+                            <a class="btn btn-primary course-card-cta"
+                                href="?page=course&amp;id=<?= (int) ($course['id'] ?? 0); ?>">
+                                <span>Explore Course</span><span aria-hidden="true">&rarr;</span>
                             </a>
                         </div>
                     </div>

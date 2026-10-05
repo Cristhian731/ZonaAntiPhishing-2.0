@@ -21,16 +21,22 @@ $activePage = 'simulations';
 ob_start();
 ?>
 
-<header class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4 mb-lg-5">
-    <div>
-        <p class="small fw-bold text-primary text-uppercase mb-2">Practice lab</p>
-        <h1 class="display-6 fw-bold mb-2">Simulations</h1>
-        <p class="text-body-secondary mb-0">Practice identifying suspicious messages and scenarios.</p>
+<header class="simulation-library-hero p-4 p-lg-5 mb-4 mb-lg-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+        <div class="simulation-library-copy">
+            <p class="small fw-bold text-primary text-uppercase mb-2">Practice lab / Training scenarios</p>
+            <h1 class="display-5 fw-bold mb-2">Simulations</h1>
+            <p class="text-body-secondary mb-0">
+                Step into realistic situations, assess the signals, and build confidence in your decisions.
+            </p>
+        </div>
+        <div class="simulation-library-count">
+            <span class="simulation-card-icon" aria-hidden="true"></span>
+            <span class="small fw-bold text-uppercase">Available training</span>
+            <strong><?= count($simulations); ?></strong>
+            <span><?= count($simulations) === 1 ? 'simulation' : 'simulations'; ?></span>
+        </div>
     </div>
-
-    <span class="badge rounded-pill text-bg-light border text-dark px-3 py-2">
-        <?= count($simulations); ?> <?= count($simulations) === 1 ? 'simulation' : 'simulations'; ?>
-    </span>
 </header>
 
 <?php if ($simulations === []): ?>
@@ -47,18 +53,21 @@ ob_start();
             $difficulty = htmlspecialchars(ucfirst((string) ($simulation['difficulty'] ?? 'beginner')), ENT_QUOTES, 'UTF-8');
             ?>
             <div class="col">
-                <article class="card dashboard-stat h-100 shadow-sm">
+                <article class="card dashboard-stat simulation-card h-100 shadow-sm">
                     <div class="card-body d-flex flex-column p-4">
-                        <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
-                            <h2 class="h5 fw-bold mb-0"><?= $simulationTitle; ?></h2>
+                        <div class="simulation-card-mark d-flex justify-content-between align-items-start gap-3 mb-4">
+                            <span class="simulation-card-icon" aria-hidden="true"></span>
                             <span class="badge text-bg-primary flex-shrink-0"><?= $difficulty; ?></span>
                         </div>
-                        <p class="card-text text-body-secondary mb-0">
+                        <p class="small fw-bold text-primary text-uppercase mb-2">Decision practice</p>
+                        <h2 class="h4 fw-bold mb-3"><?= $simulationTitle; ?></h2>
+                        <p class="card-text text-body-secondary mb-0 simulation-card-description">
                             <?= $simulationDescription !== '' ? $simulationDescription : 'No description available.'; ?>
                         </p>
                         <div class="mt-auto pt-4">
-                            <a class="btn btn-primary" href="?page=simulation&amp;id=<?= $simulationId; ?>">
-                                Start Simulation
+                            <a class="btn btn-primary simulation-card-cta"
+                                href="?page=simulation&amp;id=<?= $simulationId; ?>">
+                                <span>Enter training</span><span aria-hidden="true">&rarr;</span>
                             </a>
                         </div>
                     </div>
