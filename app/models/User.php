@@ -57,4 +57,12 @@ class User
             'password_hash' => $hashedPassword
         ]);
     }
+
+    public function updateLastLogin(int $userId): void
+    {
+        $sql = "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = :id";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['id' => $userId]);
+    }
 }

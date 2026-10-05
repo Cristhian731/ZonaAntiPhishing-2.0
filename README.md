@@ -50,7 +50,7 @@ Zona AntiPhishing helps students, professionals, and organizations recognize, pr
 - **Lesson Content:** read lesson material, optional summaries, estimated duration, and navigate lessons within a course.
 - **Quiz Engine:** answer lesson quizzes, receive a score, and see whether the passing threshold was reached.
 - **Realistic Simulations:** classify phishing scenarios and receive explanatory feedback.
-- **URL Analyzer:** review common URL warning signs, including missing HTTPS, IP-based hosts, `@` characters, long URLs, deep paths, and selected link-shortener domains. It is not a reputation service or safety guarantee.
+- **URL Analyzer:** review common URL warning signs, including missing HTTPS, IP-based hosts, `@` characters, punycode, sensitive-action keywords, brand impersonation, excessive subdomains, long URLs, deep paths, and selected link-shortener domains. It is not a reputation service or safety guarantee.
 - **Progress Tracking:** record completed lessons and show learning metrics on the dashboard and profile.
 - **Profile:** view basic account information and personal learning metrics.
 - **Certificates:** automatically issue a course-completion certificate when the course requirements are met.
@@ -167,7 +167,7 @@ Routes use the `page` query parameter:
 | `?page=certificate&id={id}`     | View a certificate                                                   |
 | `?page=certificate-pdf&id={id}` | Download a certificate PDF                                           |
 | `?page=profile`                 | View account details and progress                                    |
-| `?page=logout`                  | End the current session                                              |
+| `?page=logout`                  | End the current session (POST request with CSRF token required)       |
 
 Authenticated users who open the site root are sent to the dashboard. Learning and account routes require a session.
 

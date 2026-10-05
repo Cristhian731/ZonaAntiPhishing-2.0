@@ -1,6 +1,33 @@
 <?php
 
+$isHttps = (
+    isset($_SERVER['HTTPS'])
+    && $_SERVER['HTTPS'] !== ''
+    && strtolower((string) $_SERVER['HTTPS']) !== 'off'
+) || (isset($_SERVER['SERVER_PORT']) && (string) $_SERVER['SERVER_PORT'] === '443');
+
+header('X-Frame-Options: SAMEORIGIN');
+header('X-Content-Type-Options: nosniff');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+header(
+    "Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; "
+    . "form-action 'self'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+    . "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+    . "img-src 'self' data: https://images.unsplash.com; "
+    . "font-src 'self' data: https://cdn.jsdelivr.net; connect-src 'self'"
+);
+
+ini_set('session.use_strict_mode', '1');
+ini_set('session.use_only_cookies', '1');
+
 if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'secure' => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
     session_start();
 }
 

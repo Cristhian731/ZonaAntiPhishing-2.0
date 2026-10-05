@@ -10,26 +10,48 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!CsrfService::validateToken($_POST['csrf_token'] ?? null)) {
+    $csrfToken = isset($_POST['csrf_token']) && is_string($_POST['csrf_token'])
+        ? $_POST['csrf_token']
+        : null;
+
+    if (!CsrfService::validateToken($csrfToken)) {
         $message = 'Your session expired or the request could not be verified. Please try again.';
     } elseif (
-        ($_POST['accept_privacy'] ?? null) !== '1'
-        || ($_POST['accept_terms'] ?? null) !== '1'
+        !isset($_POST['accept_privacy'], $_POST['accept_terms'])
+        || $_POST['accept_privacy'] !== '1'
+        || $_POST['accept_terms'] !== '1'
     ) {
         $message = 'Please accept the Privacy Policy and Terms of Service to create an account.';
+    } elseif (!isset($_POST['name'], $_POST['email'], $_POST['password'])) {
+        $message = 'Please complete all required fields.';
+    } elseif (
+        !is_string($_POST['name'])
+        || !is_string($_POST['email'])
+        || !is_string($_POST['password'])
+    ) {
+        $message = 'Please enter valid values for all required fields.';
     } else {
-        $auth = new AuthController();
+        $name = trim($_POST['name']);
+        $email = trim($_POST['email']);
+        $password = $_POST['password'];
 
-        $result = $auth->register(
-            $_POST['name'],
-            $_POST['email'],
-            $_POST['password']
-        );
-
-        if ($result) {
-            $message = "User registered successfully ✅";
+        if ($name === '' || $email === '' || $password === '') {
+            $message = 'Name, email, and password are required.';
+        } elseif (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+            $message = 'Please enter a valid email address.';
+        } elseif (!AuthController::hasValidPasswordLength($password)) {
+            $message = 'Your password must be at least '
+                . AuthController::MIN_PASSWORD_LENGTH
+                . ' characters long.';
         } else {
-            $message = "Email already exists ❌";
+            $auth = new AuthController();
+            $result = $auth->register($name, $email, $password);
+
+            if ($result) {
+                $message = "User registered successfully ✅";
+            } else {
+                $message = "Email already exists ❌";
+            }
         }
     }
 }
@@ -359,7 +381,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="mb-3">
                         <label class="form-label" for="password">Password</label>
                         <input class="form-control" type="password" id="password" name="password"
-                            autocomplete="new-password" required>
+                            autocomplete="new-password" minlength="<?= AuthController::MIN_PASSWORD_LENGTH; ?>" required>
                     </div>
 
                     <fieldset class="policy-consent mb-4">
