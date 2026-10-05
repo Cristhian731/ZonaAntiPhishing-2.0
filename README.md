@@ -126,12 +126,13 @@ Bootstrap assets and the landing/authentication imagery are loaded from external
 ### Database Setup
 
 1. Start Apache and MySQL/MariaDB in XAMPP.
-2. Create a database named `zona_antiphishing` using `utf8mb4` character encoding.
+2. Create a database named `zona_antiphishing` using the `utf8mb4` character set. Sprint 12 explicitly uses `utf8mb4_unicode_ci` for its temporary text tables to match the imported schema; the database default collation does not need to be changed.
 3. Import [`docs/database/sprint10_certificates_complete.sql`](docs/database/sprint10_certificates_complete.sql) into that database. This dump creates the tables and includes development seed data; it does not create the database itself.
 4. Apply [`docs/database/sprint11_lesson_summary.sql`](docs/database/sprint11_lesson_summary.sql) after the dump. It adds the nullable `lessons.summary` column and updates the seeded lessons with educational content.
 5. Apply [`docs/database/sprint12_educational_content.sql`](docs/database/sprint12_educational_content.sql) after Sprint 11 to install the complete lesson content, summaries, and quizzes. Back up the database first; the migration preserves existing quiz questions, options, and attempts.
 6. Apply [`docs/database/sprint13_simulations2.sql`](docs/database/sprint13_simulations2.sql) after Sprint 12 to add ordered simulation scenarios and expand each simulation to five decisions. Back up the database first; existing attempt records are preserved as version 1.
-7. Set the local database host, database name, username, and password in [`config/database.php`](config/database.php) to match your environment.
+7. Apply [`docs/database/sprint14_login_attempts.sql`](docs/database/sprint14_login_attempts.sql) to enable database-backed login throttling.
+8. Set the local database host, database name, username, and password in [`config/database.php`](config/database.php) to match your environment.
 
 The application currently reads database settings directly from [`config/database.php`](config/database.php); it does not load a `.env` file or run migrations automatically. Keep deployment credentials out of public repositories and do not use development database defaults in production.
 

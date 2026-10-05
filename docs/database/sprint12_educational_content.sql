@@ -378,7 +378,7 @@ CREATE TEMPORARY TABLE sprint12_new_quizzes (
     lesson_id INT NOT NULL PRIMARY KEY,
     title VARCHAR(150) NOT NULL,
     description TEXT NOT NULL
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 INSERT INTO sprint12_new_quizzes (lesson_id, title, description) VALUES
 (2, 'Common Phishing Indicators Quiz', 'Assess sender, context, urgency, attachments, and link warning signs.'),
@@ -402,7 +402,7 @@ CREATE TEMPORARY TABLE sprint12_new_questions (
     question_text TEXT NOT NULL,
     explanation TEXT NOT NULL,
     PRIMARY KEY (lesson_id, question_key)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TEMPORARY TABLE sprint12_new_options (
     lesson_id INT NOT NULL,
@@ -411,7 +411,7 @@ CREATE TEMPORARY TABLE sprint12_new_options (
     option_text TEXT NOT NULL,
     is_correct TINYINT(1) NOT NULL,
     PRIMARY KEY (lesson_id, question_key, option_order)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 INSERT INTO sprint12_new_questions (lesson_id, question_key, question_text, explanation) VALUES
 (1,'Q3','A message claims to be from a bank and asks for a one-time sign-in code. What is the safest interpretation?','A one-time code can authorize account access; verify the request through the bank using a trusted channel.'),

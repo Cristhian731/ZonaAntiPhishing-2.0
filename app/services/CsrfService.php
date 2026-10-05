@@ -13,6 +13,14 @@ class CsrfService
         return $_SESSION['csrf_token'];
     }
 
+    public static function regenerateToken(): string
+    {
+        self::ensureSession();
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+        return $_SESSION['csrf_token'];
+    }
+
     public static function validateToken(mixed $token): bool
     {
         self::ensureSession();

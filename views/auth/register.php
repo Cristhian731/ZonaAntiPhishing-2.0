@@ -34,9 +34,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name = trim($_POST['name']);
         $email = trim($_POST['email']);
         $password = $_POST['password'];
+        $nameLength = AuthController::nameLength($name);
 
-        if ($name === '' || $email === '' || $password === '') {
-            $message = 'Name, email, and password are required.';
+        if ($nameLength === null) {
+            $message = 'Please enter a valid name.';
+        } elseif ($nameLength < AuthController::MIN_NAME_LENGTH) {
+            $message = 'Name must be at least ' . AuthController::MIN_NAME_LENGTH . ' characters long.';
+        } elseif ($nameLength > AuthController::MAX_NAME_LENGTH) {
+            $message = 'Name must be no more than ' . AuthController::MAX_NAME_LENGTH . ' characters long.';
+        } elseif ($email === '' || $password === '') {
+            $message = 'Email and password are required.';
         } elseif (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             $message = 'Please enter a valid email address.';
         } elseif (!AuthController::hasValidPasswordLength($password)) {

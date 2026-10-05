@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($result) {
                 session_regenerate_id(true);
+                CsrfService::regenerateToken();
 
                 $_SESSION['user_id'] = $result['id'];
                 $_SESSION['user_name'] = $result['name'];
@@ -36,7 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
 
-            $message = 'Invalid credentials.';
+            $remainingSeconds = $auth->getLoginBlockSeconds(trim($email));
+            $message = $remainingSeconds > 0
+                ? 'Too many failed login attempts. Try again in about '
+                    . (int) ceil($remainingSeconds / 60)
+                    . ' minute(s).'
+                : 'Invalid credentials.';
         } else {
             $message = 'Invalid credentials.';
         }
