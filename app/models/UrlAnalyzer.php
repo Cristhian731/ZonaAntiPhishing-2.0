@@ -21,7 +21,10 @@ class UrlAnalyzer
             $findings[] = 'The URL does not use HTTPS.';
         }
 
-        if (str_contains($url, '@')) {
+        $hasAuthorityCredentials = is_array($parts)
+            && (array_key_exists('user', $parts) || array_key_exists('pass', $parts));
+
+        if ($hasAuthorityCredentials) {
             $findings[] = 'The URL contains an @ symbol, which can disguise the destination host.';
         }
 

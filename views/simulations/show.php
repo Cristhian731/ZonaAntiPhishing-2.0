@@ -184,8 +184,8 @@ ob_start();
             <h2 id="simulation-progress-title" class="h6 fw-bold mb-0">Scenario <?= $stepOrder; ?> of 5</h2>
             <span class="small text-body-secondary"><?= $progressPercent; ?>%</span>
         </div>
-        <div class="progress" role="progressbar" aria-label="Simulation progress"
-            aria-valuenow="<?= $stepOrder; ?>" aria-valuemin="1" aria-valuemax="5">
+        <div class="progress" role="progressbar" aria-label="Simulation progress" aria-valuenow="<?= $stepOrder; ?>"
+            aria-valuemin="1" aria-valuemax="5">
             <div class="progress-bar" style="width: <?= $progressPercent; ?>%"></div>
         </div>
     </section>
@@ -206,8 +206,8 @@ ob_start();
 
                     <div class="d-flex flex-column flex-sm-row gap-3">
                         <div class="form-check border rounded-2 px-5 py-3 flex-fill">
-                            <input class="form-check-input" type="radio" name="answer" id="answer-phishing"
-                                value="phishing" required>
+                            <input class="form-check-input" type="radio" name="answer" id="answer-phishing" value="phishing"
+                                required>
                             <label class="form-check-label w-100 fw-semibold" for="answer-phishing">
                                 Phishing
                             </label>
