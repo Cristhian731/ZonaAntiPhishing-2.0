@@ -129,7 +129,8 @@ Bootstrap assets and the landing/authentication imagery are loaded from external
 2. Create a database named `zona_antiphishing` using `utf8mb4` character encoding.
 3. Import [`docs/database/sprint10_certificates_complete.sql`](docs/database/sprint10_certificates_complete.sql) into that database. This dump creates the tables and includes development seed data; it does not create the database itself.
 4. Apply [`docs/database/sprint11_lesson_summary.sql`](docs/database/sprint11_lesson_summary.sql) after the dump. It adds the nullable `lessons.summary` column and updates the seeded lessons with educational content.
-5. Set the local database host, database name, username, and password in [`config/database.php`](config/database.php) to match your environment.
+5. Apply [`docs/database/sprint12_educational_content.sql`](docs/database/sprint12_educational_content.sql) after Sprint 11 to install the complete lesson content, summaries, and quizzes. Back up the database first; the migration preserves existing quiz questions, options, and attempts.
+6. Set the local database host, database name, username, and password in [`config/database.php`](config/database.php) to match your environment.
 
 The application currently reads database settings directly from [`config/database.php`](config/database.php); it does not load a `.env` file or run migrations automatically. Keep deployment credentials out of public repositories and do not use development database defaults in production.
 
@@ -147,25 +148,25 @@ The actual path depends on the folder name and where the project is installed. T
 
 Routes use the `page` query parameter:
 
-| Route | Purpose |
-| --- | --- |
-| `?page=home` | Public landing page; also the default for visitors without a session |
-| `?page=register` | Create an account |
-| `?page=login` | Sign in |
-| `?page=dashboard` | View learning metrics |
-| `?page=courses` | Browse courses |
-| `?page=course&id={id}` | View course details and lessons |
-| `?page=lesson&id={id}` | Read lesson content and navigate within a course |
-| `?page=quiz&lesson_id={id}` | Take the quiz attached to a lesson |
-| `?page=quizzes` | Review available quizzes and personal status |
-| `?page=simulations` | Browse phishing simulations |
-| `?page=simulation&id={id}` | Complete a simulation scenario |
-| `?page=url-analyzer` | Analyze URL warning signs |
-| `?page=certificates` | View earned certificates |
-| `?page=certificate&id={id}` | View a certificate |
-| `?page=certificate-pdf&id={id}` | Download a certificate PDF |
-| `?page=profile` | View account details and progress |
-| `?page=logout` | End the current session |
+| Route                           | Purpose                                                              |
+| ------------------------------- | -------------------------------------------------------------------- |
+| `?page=home`                    | Public landing page; also the default for visitors without a session |
+| `?page=register`                | Create an account                                                    |
+| `?page=login`                   | Sign in                                                              |
+| `?page=dashboard`               | View learning metrics                                                |
+| `?page=courses`                 | Browse courses                                                       |
+| `?page=course&id={id}`          | View course details and lessons                                      |
+| `?page=lesson&id={id}`          | Read lesson content and navigate within a course                     |
+| `?page=quiz&lesson_id={id}`     | Take the quiz attached to a lesson                                   |
+| `?page=quizzes`                 | Review available quizzes and personal status                         |
+| `?page=simulations`             | Browse phishing simulations                                          |
+| `?page=simulation&id={id}`      | Complete a simulation scenario                                       |
+| `?page=url-analyzer`            | Analyze URL warning signs                                            |
+| `?page=certificates`            | View earned certificates                                             |
+| `?page=certificate&id={id}`     | View a certificate                                                   |
+| `?page=certificate-pdf&id={id}` | Download a certificate PDF                                           |
+| `?page=profile`                 | View account details and progress                                    |
+| `?page=logout`                  | End the current session                                              |
 
 Authenticated users who open the site root are sent to the dashboard. Learning and account routes require a session.
 

@@ -68,7 +68,30 @@ $quizController = new QuizController();
 $quiz = $quizController->getQuizForLesson($lessonId);
 $estimatedMinutes = max(0, (int) ($lesson['estimated_minutes'] ?? 0));
 $lessonContent = trim((string) ($lesson['content'] ?? ''));
-$contentParagraphs = preg_split('/(?:\r\n|\r|\n)\s*(?:\r\n|\r|\n)+/', $lessonContent) ?: [];
+$sectionTitles = [
+    'Introduction',
+    'Main Concepts',
+    'Real Example',
+    'How to Protect Yourself',
+    'Key Takeaways',
+];
+$lessonSections = [];
+$currentSection = null;
+
+foreach (preg_split('/\R/', $lessonContent) ?: [] as $contentLine) {
+    $heading = trim($contentLine);
+
+    if (in_array($heading, $sectionTitles, true)) {
+        $currentSection = $heading;
+        $lessonSections[$currentSection] = [];
+        continue;
+    }
+
+    if ($currentSection !== null) {
+        $lessonSections[$currentSection][] = $contentLine;
+    }
+}
+
 $summary = trim((string) ($lesson['summary'] ?? ''));
 $title = (string) ($lesson['title'] ?? 'Lesson') . ' | Zona AntiPhishing';
 $activePage = 'courses';
@@ -111,14 +134,60 @@ ob_start();
 <article class="card dashboard-stat shadow-sm mb-4" aria-labelledby="lesson-content-title">
     <div class="card-body p-4 p-lg-5">
         <h2 id="lesson-content-title" class="h4 fw-bold mb-4">Lesson content</h2>
-        <?php if ($contentParagraphs === [] || (count($contentParagraphs) === 1 && trim($contentParagraphs[0]) === '')): ?>
+        <?php if ($lessonContent === ''): ?>
             <p class="text-body-secondary mb-0">Lesson content is not available yet.</p>
-        <?php else: ?>
+        <?php elseif ($lessonSections === []): ?>
             <div class="lesson-content">
-                <?php foreach ($contentParagraphs as $paragraph): ?>
+                <?php foreach (preg_split('/(?:\r\n|\r|\n)\s*(?:\r\n|\r|\n)+/', $lessonContent) ?: [] as $paragraph): ?>
                     <?php if (trim($paragraph) !== ''): ?>
                         <p><?= nl2br(htmlspecialchars(trim($paragraph), ENT_QUOTES, 'UTF-8')); ?></p>
                     <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="lesson-content">
+                <?php foreach ($sectionTitles as $sectionTitle): ?>
+                    <?php if (!isset($lessonSections[$sectionTitle])): ?>
+                        <?php continue; ?>
+                    <?php endif; ?>
+                    <?php
+                    $sectionLines = array_values(array_filter(
+                        array_map('trim', $lessonSections[$sectionTitle]),
+                        static fn(string $line): bool => $line !== ''
+                    ));
+                    $isRecommendationList = $sectionTitle === 'How to Protect Yourself';
+                    $isTakeawayList = $sectionTitle === 'Key Takeaways';
+                    ?>
+                    <section class="mb-4" aria-labelledby="lesson-section-<?= (int) array_search($sectionTitle, $sectionTitles, true); ?>">
+                        <h3 id="lesson-section-<?= (int) array_search($sectionTitle, $sectionTitles, true); ?>" class="h5 fw-bold mb-3">
+                            <?= htmlspecialchars($sectionTitle, ENT_QUOTES, 'UTF-8'); ?>
+                        </h3>
+                        <?php if ($isRecommendationList || $isTakeawayList): ?>
+                            <?php $listItems = array_map(
+                                static fn(string $line): string => preg_replace('/^(?:\d+\.|[-*])\s+/', '', $line) ?? $line,
+                                $sectionLines
+                            ); ?>
+                            <?php if ($isRecommendationList): ?>
+                                <ol class="mb-0">
+                                    <?php foreach ($listItems as $listItem): ?>
+                                        <li class="mb-2"><?= htmlspecialchars($listItem, ENT_QUOTES, 'UTF-8'); ?></li>
+                                    <?php endforeach; ?>
+                                </ol>
+                            <?php else: ?>
+                                <ul class="mb-0">
+                                    <?php foreach ($listItems as $listItem): ?>
+                                        <li class="mb-2"><?= htmlspecialchars($listItem, ENT_QUOTES, 'UTF-8'); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <?php foreach (preg_split('/\R\s*\R/', implode("\n", $sectionLines)) ?: [] as $paragraph): ?>
+                                <?php if (trim($paragraph) !== ''): ?>
+                                    <p><?= nl2br(htmlspecialchars(trim($paragraph), ENT_QUOTES, 'UTF-8')); ?></p>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </section>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
